@@ -1,0 +1,12 @@
+// SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+{
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter"
+      "editor.formatOnSave": true,
+
+      "python.linting.flake8Args": [
+          "--max-line-length=88"
+      ],
+    }
+  }
