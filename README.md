@@ -1,2 +1,11 @@
 # Gateway
 Scripts for the measurement data transmission to the SEGuRo platform
+
+
+## Requirements
+|Package| Version|
+|---|---|
+|asyncua|1.0.4|
+|schema|0.7.5|
+
+`pip install -r requirements.txt`
