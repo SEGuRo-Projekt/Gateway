@@ -1,5 +1,5 @@
 ---
-# SPDX-FileCopyrightText: 2023 Steffen Vogel, OPAL-RT Germany GmbH
+# SPDX-FileCopyrightText: 2023 Felix Wege, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
 
 repos:
@@ -31,6 +31,7 @@ repos:
     rev: v1.0.0
     hooks:
       - id: reuse
+        exclude: README.md
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.23.0
