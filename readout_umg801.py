@@ -147,7 +147,7 @@ class SubscriptionHandler:
 
     def datachange_notification(self, node, val, data):
         print(f"{self.node_ids[nodeid_to_string(node.nodeid)]}, {val}")
-        self.counter += 1
+        # self.counter += 1 # used for testing
 
 
 class Mode(Enum):
@@ -186,10 +186,10 @@ async def read_measurements(device, mode: Mode):
             handler = SubscriptionHandler(node_ids)
             sub = await client.create_subscription(0, handler)
 
-            while True:
-                await asyncio.gather(
-                    *[sub.subscribe_data_change(node) for _, node in nodes.items()]
-                )
+            await asyncio.gather(
+                *[sub.subscribe_data_change(node) for _, node in nodes.items()]
+            )
+            await asyncio.sleep(float("inf"))
 
         elif mode == Mode.GATHER:
             print("Reading in gather mode ...")
