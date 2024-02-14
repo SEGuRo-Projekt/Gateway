@@ -12,8 +12,8 @@ devices:
     uri: janitza-umg.acs-lab.eonerc.rwth-aachen.de
     port: 4840
 
-    # Number of samples per second (currently unsupported)
-    sample_rate: 100.0
+    # Number of samples per second sent to the broker
+    sending_rate: 100.0
 
     # Measurement names need to be one of the allowed OPC-UA objects
     # U1 = Voltage LN1

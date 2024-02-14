@@ -9,6 +9,8 @@ from enum import Enum
 import yaml
 from schema import Or, Optional, Schema, SchemaError
 
+import time
+
 opcua_objects = [
     "U1",
     "U2",
@@ -176,18 +178,42 @@ async def read_and_print(name, node):
     print(f"{name}: {value}")
 
 
+async def read_and_store(name, node, publishing_handler):
+    value = await node.read_value()
+    publishing_handler.values[name] = value
+
+
+class PublishingHandler:
+    """
+    The PublishingHandler is used to handle the sending of data to the broker.
+    """
+
+    def __init__(self, values):
+        self.values = values
+        self.last_time = 0
+
+    def send_values(self, time, rate):
+        time_delta = time - self.last_time
+        if time_delta > 1 / rate:
+            print(self.values)
+            self.last_time = time
+        return time_delta
+
+
 class SubscriptionHandler:
     """
     The SubscriptionHandler is used to handle the data that is received for the
     subscription.
     """
 
-    def __init__(self, node_ids: dict):
+    def __init__(self, node_ids: dict, publish_handler: PublishingHandler):
         self.node_ids = node_ids
         self.counter = 0
+        self.values = publish_handler.values
 
     def datachange_notification(self, node, val, data):
-        print(f"{self.node_ids[nodeid_to_string(node.nodeid)]}, {val}")
+        # print(f"{self.node_ids[nodeid_to_string(node.nodeid)]}, {val}")
+        self.values[self.node_ids[nodeid_to_string(node.nodeid)]] = val
         # self.counter += 1 # used for testing
 
 
@@ -211,6 +237,10 @@ async def read_measurements(device, mode: Mode):
     print(f"Connecting to {url} ...")
 
     browse_paths = construct_browse_paths(uid, device["measurements"])
+    values = dict.fromkeys(browse_paths.keys())
+
+    pub_handler = PublishingHandler(values)
+    # asyncio.run(pub_handler.send_values())
 
     async with Client(url=url) as client:
         nodes = {}
@@ -224,21 +254,32 @@ async def read_measurements(device, mode: Mode):
         if mode == Mode.SUBSCRIBE:
             print("Reading in subscription mode ...")
 
-            handler = SubscriptionHandler(node_ids)
+            handler = SubscriptionHandler(node_ids, pub_handler)
             sub = await client.create_subscription(0, handler)
 
             await asyncio.gather(
                 *[sub.subscribe_data_change(node) for _, node in nodes.items()]
             )
-            await asyncio.sleep(float("inf"))
+            while True:
+                # pub_handler.send_values(time.time(), device["sending_rate"])
+                time_delta = pub_handler.send_values(
+                    time.time(), device["sending_rate"]
+                )
+                await asyncio.sleep(1 / device["sending_rate"] - time_delta)
+            # await asyncio.sleep(float("inf"))
 
         elif mode == Mode.GATHER:
             print("Reading in gather mode ...")
 
             while True:
                 await asyncio.gather(
-                    *[read_and_print(name, node) for name, node in nodes.items()]
+                    # *[read_and_print(name, node) for name, node in nodes.items()]
+                    *[
+                        read_and_store(name, node, pub_handler)
+                        for name, node in nodes.items()
+                    ]
                 )
+                pub_handler.send_values(time.time(), device["sending_rate"])
 
 
 def main():
