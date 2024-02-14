@@ -9,7 +9,25 @@ from enum import Enum
 import yaml
 from schema import Or, Optional, Schema, SchemaError
 
-opcua_objects = ["U1", "U2", "U3", "Freq"]
+opcua_objects = [
+    "U1",
+    "U2",
+    "U3",
+    "Freq",
+    "IG1/I1",
+    "IG1/I2",
+    "IG1/I3",
+    "IG1/I4",
+    "IG2/I1",
+    "IG2/I2",
+    "IG2/I3",
+    "IG2/I4",
+    "IG3/I1",
+    "IG3/I2",
+    "IG3/I3",
+    "IG3/I4",
+]
+
 
 config_schema = Schema(
     {
@@ -84,7 +102,7 @@ def construct_browse_paths(uid: str, measurements: dict):
         uid {str} -- Unique identifier of the device
         measurements {dict} -- Measurements of the device
     """
-    base = ["0:Objects", "2:Device", "2:Measurements", "2:UG"]
+    base = ["0:Objects", "2:Device", "2:Measurements"]
     paths = {}
     for measurement in measurements:
         if measurements[measurement]["type"] == "voltage":
@@ -98,8 +116,9 @@ def construct_browse_paths(uid: str, measurements: dict):
 
             for valtype in valtypes:
                 for attribute in attributes:
-                    paths[f"{uid}/{measurement}/{valtype}_{attribute}"] = (
+                    paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
                         base
+                        + ["2:UG"]
                         + [f"2:{measurement}"]
                         + [f"2:{valtype}"]
                         + [f"2:{attribute}"]
@@ -107,18 +126,40 @@ def construct_browse_paths(uid: str, measurements: dict):
 
                 if measurements[measurement]["momentary"]:
                     paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
-                        base + [f"2:{measurement}"] + [f"2:{valtype}"]
+                        base + ["2:UG"] + [f"2:{measurement}"] + [f"2:{valtype}"]
                     )
         elif measurements[measurement]["type"] == "current":
-            pass
+            valtypes = ["IComplexIm", "IComplexRe"]
+
+            attributes = []
+            if exist_and_true(measurements[measurement], "min"):
+                attributes.append("Minimum")
+            if exist_and_true(measurements[measurement], "max"):
+                attributes.append("Maximum")
+
+            for valtype in valtypes:
+                group, channel = measurement.split("/")
+                for attribute in attributes:
+                    paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
+                        base
+                        # + [f"2:{measurement}"]
+                        + [f"2:{group}"]
+                        + [f"2:{channel}"]
+                        + [f"2:{valtype}"]
+                        + [f"2:{attribute}"]
+                    )
 
         elif measurements[measurement]["type"] == "frequency":
             if exist_and_true(measurements[measurement], "min"):
-                paths[f"{uid}/Freq/Minimum"] = base + ["2:Freq"] + ["2:Minimum"]
+                paths[f"{uid}/Freq/Minimum"] = (
+                    base + ["2:UG"] + ["2:Freq"] + ["2:Minimum"]
+                )
             if exist_and_true(measurements[measurement], "max"):
-                paths[f"{uid}/Freq/Maximum"] = base + ["2:Freq"] + ["2:Maximum"]
+                paths[f"{uid}/Freq/Maximum"] = (
+                    base + ["2:UG"] + ["2:Freq"] + ["2:Maximum"]
+                )
             if exist_and_true(measurements[measurement], "momentary"):
-                paths[f"{uid}/Freq/Momentary"] = base + ["2:Freq"]
+                paths[f"{uid}/Freq/Momentary"] = base + ["2:UG"] + ["2:Freq"]
 
     return paths
 

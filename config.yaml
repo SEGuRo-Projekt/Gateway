@@ -38,6 +38,11 @@ devices:
         momentary: true
         min: false
         max: false
+      IG1/I1:
+        type: current
+        momentary: true
+        min: true
+        max: true
       Freq:
         type: frequency
         momentary: true
