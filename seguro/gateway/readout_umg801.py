@@ -16,18 +16,18 @@ opcua_objects = [
     "U2",
     "U3",
     "Freq",
-    "IG1/I1",
-    "IG1/I2",
-    "IG1/I3",
-    "IG1/I4",
-    "IG2/I1",
-    "IG2/I2",
-    "IG2/I3",
-    "IG2/I4",
-    "IG3/I1",
-    "IG3/I2",
-    "IG3/I3",
-    "IG3/I4",
+    "IG1_I1",
+    "IG1_I2",
+    "IG1_I3",
+    "IG1_I4",
+    "IG2_I1",
+    "IG2_I2",
+    "IG2_I3",
+    "IG2_I4",
+    "IG3_I1",
+    "IG3_I2",
+    "IG3_I3",
+    "IG3_I4",
 ]
 
 
@@ -40,7 +40,7 @@ config_schema = Schema(
                 Optional("description"): str,
                 "uri": str,
                 "port": Or(int, str),
-                Optional("sample_rate"): float,
+                Optional("sending_rate"): float,
                 "measurements": {
                     lambda n: n
                     in opcua_objects: {
@@ -106,6 +106,7 @@ def construct_browse_paths(uid: str, measurements: dict):
     """
     base = ["0:Objects", "2:Device", "2:Measurements"]
     paths = {}
+
     for measurement in measurements:
         if measurements[measurement]["type"] == "voltage":
             valtypes = ["ULNComplexRe", "ULNComplexIm"]
@@ -140,7 +141,7 @@ def construct_browse_paths(uid: str, measurements: dict):
                 attributes.append("Maximum")
 
             for valtype in valtypes:
-                group, channel = measurement.split("/")
+                group, channel = measurement.split("_")
                 for attribute in attributes:
                     paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
                         base
