@@ -13,7 +13,7 @@ devices:
     port: 4840
 
     # Number of samples per second sent to the broker
-    sending_rate: 100.0
+    sending_rate: 1.0
 
     # Measurement names need to be one of the allowed OPC-UA objects
     # U1 = Voltage LN1
@@ -26,23 +26,23 @@ devices:
       U1:
         type: voltage
         momentary: true
-        min: true
-        max: true
+        # min: true
+        # max: true
       U2:
         type: voltage
         momentary: true
-        min: true
-        max: false
+        # min: true
+        # max: false
       U3:
         type: voltage
         momentary: true
-        min: false
-        max: false
-      IG1/I1:
+        # min: false
+        # max: false
+      IG1_I1:
         type: current
         momentary: true
-        min: true
-        max: true
+        # min: true
+        # max: true
       Freq:
         type: frequency
         momentary: true
