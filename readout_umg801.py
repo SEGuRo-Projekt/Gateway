@@ -193,11 +193,21 @@ class PublishingHandler:
         self.values = values
         self.last_time = 0
 
-    def send_values(self, time, rate):
-        time_delta = time - self.last_time
+    def send_values(self, _time, rate):
+        time_delta = _time - self.last_time
+        if None in self.values.values():
+            return time_delta
+
         if time_delta > 1 / rate:
-            print(self.values)
-            self.last_time = time
+
+            epoch_time = time.time_ns()
+            epoch_s = str(epoch_time // 1_000_000_000)
+            epoch_ns = str(epoch_time % 1_000_000_000).zfill(9)
+            print(f"{epoch_s}.{epoch_ns}", end=" ")
+
+            print(" ".join(str(x) for x in list(self.values.values())), flush=True)
+
+            self.last_time = _time
         return time_delta
 
 
