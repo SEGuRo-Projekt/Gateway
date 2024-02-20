@@ -9,6 +9,7 @@ from enum import Enum
 import yaml
 from schema import Or, Optional, Schema, SchemaError
 
+import sys
 import time
 
 opcua_objects = [
@@ -66,7 +67,7 @@ def read_config(path: str, schema: Schema):
         try:
             schema.validate(config)
         except SchemaError as se:
-            print("Config file is invalid!")
+            log("Config file is invalid!")
             raise se
     return config
 
@@ -167,6 +168,10 @@ def construct_browse_paths(uid: str, measurements: dict):
     return paths
 
 
+def log(msg):
+    print(msg, file=sys.stderr)
+
+
 async def read_and_print(name, node):
     """
     Read a value from a node and print it.
@@ -245,7 +250,7 @@ async def read_measurements(device, mode: Mode):
     port = device["port"]
 
     url = f"opc.tcp://{uri}:{port}"
-    print(f"Connecting to {url} ...")
+    log(f"Connecting to {url} ...")
 
     browse_paths = construct_browse_paths(uid, device["measurements"])
     values = dict.fromkeys(browse_paths.keys())
@@ -258,12 +263,12 @@ async def read_measurements(device, mode: Mode):
         node_ids = {}
 
         for measurement, browse_path in browse_paths.items():
-            print(f"{measurement} : {browse_path}")
+            log(f"{measurement} : {browse_path}")
             nodes[measurement] = await client.nodes.root.get_child(browse_path)
             node_ids[nodeid_to_string(nodes[measurement].nodeid)] = measurement
 
         if mode == Mode.SUBSCRIBE:
-            print("Reading in subscription mode ...")
+            log("Reading in subscription mode ...")
 
             handler = SubscriptionHandler(node_ids, pub_handler)
             sub = await client.create_subscription(0, handler)
@@ -280,7 +285,7 @@ async def read_measurements(device, mode: Mode):
             # await asyncio.sleep(float("inf"))
 
         elif mode == Mode.GATHER:
-            print("Reading in gather mode ...")
+            log("Reading in gather mode ...")
 
             while True:
                 await asyncio.gather(
@@ -310,7 +315,7 @@ def main():
     )
     args = parser.parse_args()
 
-    print(args)
+    log(args)
 
     conf = read_config(args.CONFIG, config_schema)
     mode = Mode[args.mode]
