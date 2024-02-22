@@ -24,25 +24,20 @@ devices:
     # Allowed types are: voltage, current, frequency
     measurements:
       U1:
-        type: voltage
         momentary: true
         # min: true
         # max: true
       U2:
-        type: voltage
         momentary: true
         # min: true
         # max: false
       U3:
-        type: voltage
         momentary: true
         # min: false
         # max: false
       IG1_I1:
-        type: current
         momentary: true
         # min: true
         # max: true
       Freq:
-        type: frequency
         momentary: true
