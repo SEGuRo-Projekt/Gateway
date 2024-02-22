@@ -1,16 +1,15 @@
 # SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
 # SPDX-License-Identifier: Apache-2.0
-import asyncio
-from asyncua import Client
 import argparse
-
+import asyncio
 from enum import Enum
-
-import yaml
-from schema import Or, Optional, Schema, SchemaError
-
 import sys
 import time
+
+from asyncua import Client
+from schema import Or, Optional, Schema, SchemaError
+import yaml
+
 
 opcua_objects = [
     "U1",
@@ -67,7 +66,7 @@ def read_config(path: str, schema: Schema):
         try:
             schema.validate(config)
         except SchemaError as se:
-            log("Config file is invalid!")
+            log_msg("Config file is invalid!")
             raise se
     return config
 
@@ -168,7 +167,13 @@ def construct_browse_paths(uid: str, measurements: dict):
     return paths
 
 
-def log(msg):
+def log_msg(msg):
+    """
+    Log a message to STDERR.
+
+    Arguments:
+        msg {str} -- Message to log
+    """
     print(msg, file=sys.stderr)
 
 
@@ -185,6 +190,14 @@ async def read_and_print(name, node):
 
 
 async def read_and_store(name, node, publishing_handler):
+    """
+    Read a value from a node and store it in the publishing handler.
+
+    Arguments:
+        name {str} -- Name of the node, used as dict key
+        node {Node} -- Node to read from
+        publishing_handler {PublishingHandler} -- Publishing handler to store the value
+    """
     value = await node.read_value()
     publishing_handler.values[name] = value
 
@@ -199,12 +212,28 @@ class PublishingHandler:
         self.last_time = 0
 
     def send_values(self, _time, rate):
+        """
+        Send values to broker if the time delta is greater than the sending
+        rate.
+
+        Convert data to string in the villas.human format and print
+        it to STDOUT to be captured by an exec-type VILLASnode.
+
+        Arguments:
+            _time {float} -- Current time
+            rate {float} -- Sending rate in Hz
+
+        Returns:
+            float -- Time delta to the last sending
+        """
         time_delta = _time - self.last_time
         if None in self.values.values():
+            # If there are still None values, do not send anything
             return time_delta
 
         if time_delta > 1 / rate:
-
+            # Print the values to STDOUT in the villas.human format:
+            # {timestamp_s}.{timestamp_ns} {value1} {value2} ...
             epoch_time = time.time_ns()
             epoch_s = str(epoch_time // 1_000_000_000)
             epoch_ns = str(epoch_time % 1_000_000_000).zfill(9)
@@ -228,12 +257,18 @@ class SubscriptionHandler:
         self.values = publish_handler.values
 
     def datachange_notification(self, node, val, data):
-        # print(f"{self.node_ids[nodeid_to_string(node.nodeid)]}, {val}")
+        """
+        Callback for the data change notification. Stores updated values in the
+        values dict.
+        """
         self.values[self.node_ids[nodeid_to_string(node.nodeid)]] = val
-        # self.counter += 1 # used for testing
 
 
 class Mode(Enum):
+    """
+    Enum for the different modes of reading the measurements.
+    """
+
     SUBSCRIBE = 1
     GATHER = 2
 
@@ -250,7 +285,7 @@ async def read_measurements(device, mode: Mode):
     port = device["port"]
 
     url = f"opc.tcp://{uri}:{port}"
-    log(f"Connecting to {url} ...")
+    log_msg(f"Connecting to {url} ...")
 
     browse_paths = construct_browse_paths(uid, device["measurements"])
     values = dict.fromkeys(browse_paths.keys())
@@ -263,12 +298,12 @@ async def read_measurements(device, mode: Mode):
         node_ids = {}
 
         for measurement, browse_path in browse_paths.items():
-            log(f"{measurement} : {browse_path}")
+            log_msg(f"{measurement} : {browse_path}")
             nodes[measurement] = await client.nodes.root.get_child(browse_path)
             node_ids[nodeid_to_string(nodes[measurement].nodeid)] = measurement
 
         if mode == Mode.SUBSCRIBE:
-            log("Reading in subscription mode ...")
+            log_msg("Reading in subscription mode ...")
 
             handler = SubscriptionHandler(node_ids, pub_handler)
             sub = await client.create_subscription(0, handler)
@@ -276,20 +311,19 @@ async def read_measurements(device, mode: Mode):
             await asyncio.gather(
                 *[sub.subscribe_data_change(node) for _, node in nodes.items()]
             )
+
             while True:
-                # pub_handler.send_values(time.time(), device["sending_rate"])
                 time_delta = pub_handler.send_values(
                     time.time(), device["sending_rate"]
                 )
+                # Wait until the next sending time to avoid busy waiting
                 await asyncio.sleep(1 / device["sending_rate"] - time_delta)
-            # await asyncio.sleep(float("inf"))
 
         elif mode == Mode.GATHER:
-            log("Reading in gather mode ...")
+            log_msg("Reading in gather mode ...")
 
             while True:
                 await asyncio.gather(
-                    # *[read_and_print(name, node) for name, node in nodes.items()]
                     *[
                         read_and_store(name, node, pub_handler)
                         for name, node in nodes.items()
@@ -315,7 +349,7 @@ def main():
     )
     args = parser.parse_args()
 
-    log(args)
+    log_msg(args)
 
     conf = read_config(args.CONFIG, config_schema)
     mode = Mode[args.mode]
