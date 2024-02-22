@@ -11,24 +11,30 @@ from schema import Or, Optional, Schema, SchemaError
 import yaml
 
 
-opcua_objects = [
-    "U1",
-    "U2",
-    "U3",
-    "Freq",
-    "IG1_I1",
-    "IG1_I2",
-    "IG1_I3",
-    "IG1_I4",
-    "IG2_I1",
-    "IG2_I2",
-    "IG2_I3",
-    "IG2_I4",
-    "IG3_I1",
-    "IG3_I2",
-    "IG3_I3",
-    "IG3_I4",
-]
+class Type(Enum):
+    VOLTAGE = "voltage"
+    CURRENT = "current"
+    FREQUENCY = "frequency"
+
+
+opcua_objects = {
+    "U1": Type.VOLTAGE,
+    "U2": Type.VOLTAGE,
+    "U3": Type.VOLTAGE,
+    "Freq": Type.FREQUENCY,
+    "IG1_I1": Type.CURRENT,
+    "IG1_I2": Type.CURRENT,
+    "IG1_I3": Type.CURRENT,
+    "IG1_I4": Type.CURRENT,
+    "IG2_I1": Type.CURRENT,
+    "IG2_I2": Type.CURRENT,
+    "IG2_I3": Type.CURRENT,
+    "IG2_I4": Type.CURRENT,
+    "IG3_I1": Type.CURRENT,
+    "IG3_I2": Type.CURRENT,
+    "IG3_I3": Type.CURRENT,
+    "IG3_I4": Type.CURRENT,
+}
 
 
 config_schema = Schema(
@@ -43,8 +49,7 @@ config_schema = Schema(
                 Optional("sending_rate"): float,
                 "measurements": {
                     lambda n: n
-                    in opcua_objects: {
-                        "type": Or("voltage", "current", "frequency"),
+                    in opcua_objects.keys(): {
                         Optional("min"): bool,
                         Optional("max"): bool,
                         Optional("momentary"): bool,
@@ -108,7 +113,8 @@ def construct_browse_paths(uid: str, measurements: dict):
     paths = {}
 
     for measurement in measurements:
-        if measurements[measurement]["type"] == "voltage":
+        if opcua_objects[measurement] == Type.VOLTAGE:
+
             valtypes = ["ULNComplexRe", "ULNComplexIm"]
 
             attributes = []
@@ -131,7 +137,7 @@ def construct_browse_paths(uid: str, measurements: dict):
                     paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
                         base + ["2:UG"] + [f"2:{measurement}"] + [f"2:{valtype}"]
                     )
-        elif measurements[measurement]["type"] == "current":
+        elif opcua_objects[measurement] == Type.CURRENT:
             valtypes = ["IComplexIm", "IComplexRe"]
 
             attributes = []
@@ -145,14 +151,13 @@ def construct_browse_paths(uid: str, measurements: dict):
                 for attribute in attributes:
                     paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
                         base
-                        # + [f"2:{measurement}"]
                         + [f"2:{group}"]
                         + [f"2:{channel}"]
                         + [f"2:{valtype}"]
                         + [f"2:{attribute}"]
                     )
 
-        elif measurements[measurement]["type"] == "frequency":
+        elif opcua_objects[measurement] == Type.FREQUENCY:
             if exist_and_true(measurements[measurement], "min"):
                 paths[f"{uid}/Freq/Minimum"] = (
                     base + ["2:UG"] + ["2:Freq"] + ["2:Minimum"]
