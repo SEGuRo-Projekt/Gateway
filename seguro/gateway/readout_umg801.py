@@ -12,9 +12,9 @@ import yaml
 
 
 class Type(Enum):
-    VOLTAGE = "voltage"
-    CURRENT = "current"
-    FREQUENCY = "frequency"
+    VOLTAGE = 0
+    CURRENT = 1
+    FREQUENCY = 2
 
 
 opcua_objects = {
