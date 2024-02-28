@@ -1,5 +1,0 @@
-# SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
-# SPDX-License-Identifier: Apache-2.0
-
-flake8==6.0.0
-pre-commit==3.3.1
