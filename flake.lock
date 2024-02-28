@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "ethercat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1694079333,
+        "narHash": "sha256-6F3zBhnU4CFpiO+Cnbd6ecUuiGH/KUntpPfuSYZ+rAI=",
+        "owner": "etherlab.org",
+        "repo": "ethercat",
+        "rev": "722b2d607c4fc004ebf5204aaede0059c02274f4",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "etherlab.org",
+        "ref": "stable-1.5",
+        "repo": "ethercat",
+        "type": "gitlab"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -33,6 +50,59 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "lib60870": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1672404819,
+        "narHash": "sha256-9o+gWQbpCJb+UZzPNmzGqpWD0QbGjg41is/f1POUEQs=",
+        "owner": "mz-automation",
+        "repo": "lib60870",
+        "rev": "53a6b3c1cf3023e51cf81763b1ccf048edcd1c64",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mz-automation",
+        "ref": "v2.3.2",
+        "repo": "lib60870",
+        "type": "github"
+      }
+    },
+    "libdatachannel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1683797946,
+        "narHash": "sha256-kSK+5gFMG6tq89R1m08gNBKPdwyR/mLEDhWXQ/uk34o=",
+        "ref": "refs/tags/v0.18.4",
+        "rev": "7a5e01071ae635e06f175233abd11d623f09cbb8",
+        "revCount": 2459,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/paullouisageneau/libdatachannel.git"
+      },
+      "original": {
+        "ref": "refs/tags/v0.18.4",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/paullouisageneau/libdatachannel.git"
+      }
+    },
+    "libiec61850": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1647022552,
+        "narHash": "sha256-1vT0ry6IJqilpM7g9l7fx+ET+Dyo24WAyWqTyPM9nQw=",
+        "owner": "mz-automation",
+        "repo": "libiec61850",
+        "rev": "210cf30897631fe2006ac50483caf8fd616622a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mz-automation",
+        "ref": "v1.5.1",
+        "repo": "libiec61850",
         "type": "github"
       }
     },
@@ -73,6 +143,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1705957679,
+        "narHash": "sha256-Q8LJaVZGJ9wo33wBafvZSzapYsjOaNjP/pOnSiKVGHY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "9a333eaa80901efe01df07eade2c16d183761fa3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "release-23.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "poetry2nix": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -101,7 +187,8 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
-        "poetry2nix": "poetry2nix"
+        "poetry2nix": "poetry2nix",
+        "villas-node": "villas-node"
       }
     },
     "systems": {
@@ -166,6 +253,28 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "villas-node": {
+      "inputs": {
+        "ethercat": "ethercat",
+        "lib60870": "lib60870",
+        "libdatachannel": "libdatachannel",
+        "libiec61850": "libiec61850",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1709245127,
+        "narHash": "sha256-jdeGAZYqKrD8cMEHGCazEGttqiLJeczzEJ60sh6f328=",
+        "owner": "VILLASframework",
+        "repo": "node",
+        "rev": "73ff061ca83886ab031f8f5e8cbea75560a2b1a9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "VILLASframework",
+        "repo": "node",
         "type": "github"
       }
     }
