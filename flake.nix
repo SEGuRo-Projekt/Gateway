@@ -32,8 +32,14 @@
       };
 
       devShells.default = pkgs.mkShell {
-        inputsFrom = [self.packages.${system}.seguro-gateway];
-        packages = [pkgs.poetry];
+        inputsFrom = [
+          self.packages.${system}.seguro-gateway
+        ];
+        packages = with pkgs; [
+          poetry
+          reuse
+          pre-commit
+        ];
       };
     });
 }
