@@ -241,7 +241,7 @@ async def read_measurements(device, mode: Mode):
                 )
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Read measurements from UMG801 and print results to STDOUT."
     )
@@ -265,3 +265,7 @@ if __name__ == "__main__":
 
     for dev in conf["devices"]:
         asyncio.run(read_measurements(dev, mode))
+
+
+if __name__ == "__main__":
+    main()
