@@ -3,11 +3,11 @@
 import sys
 
 
-def log_msg(msg):
+def log_msg(msg, file=sys.stderr):
     """
     Log a message to STDERR.
 
     Arguments:
         msg {str} -- Message to log
     """
-    print(msg, file=sys.stderr)
+    print(msg, file=file)

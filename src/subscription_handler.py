@@ -8,7 +8,7 @@ from asyncua import Client
 
 from config_parser import Type, opcua_objects
 from publishing_handler import PublishingHandler
-from logger import log_msg
+from logging import log_msg
 
 
 class Mode(Enum):
@@ -56,62 +56,52 @@ def construct_browse_paths(uid: str, measurements: dict):
     base = ["0:Objects", "2:Device", "2:Measurements"]
     paths = {}
 
-    for measurement in measurements:
+    for measurement, attributes in measurements.items():
         if opcua_objects[measurement] == Type.VOLTAGE:
 
             valtypes = ["ULNComplexRe", "ULNComplexIm"]
+            for attribute in attributes:
+                for valtype in valtypes:
+                    if attribute == "Momentary":
+                        paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
+                            base + ["2:UG"] + [f"2:{measurement}"] + [f"2:{valtype}"]
+                        )
+                    else:
+                        paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
+                            base
+                            + ["2:UG"]
+                            + [f"2:{measurement}"]
+                            + [f"2:{valtype}"]
+                            + [f"2:{attribute}"]
+                        )
 
-            attributes = []
-            if exist_and_true(measurements[measurement], "min"):
-                attributes.append("Minimum")
-            if exist_and_true(measurements[measurement], "max"):
-                attributes.append("Maximum")
-
-            for valtype in valtypes:
-                for attribute in attributes:
-                    paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
-                        base
-                        + ["2:UG"]
-                        + [f"2:{measurement}"]
-                        + [f"2:{valtype}"]
-                        + [f"2:{attribute}"]
-                    )
-
-                if measurements[measurement]["momentary"]:
-                    paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
-                        base + ["2:UG"] + [f"2:{measurement}"] + [f"2:{valtype}"]
-                    )
         elif opcua_objects[measurement] == Type.CURRENT:
-            valtypes = ["IComplexIm", "IComplexRe"]
-
-            attributes = []
-            if exist_and_true(measurements[measurement], "min"):
-                attributes.append("Minimum")
-            if exist_and_true(measurements[measurement], "max"):
-                attributes.append("Maximum")
-
-            for valtype in valtypes:
+            valtypes = ["IComplexRe", "IComplexIm"]
+            for attribute in attributes:
+                # for attribute in attributes:
                 group, channel = measurement.split("_")
-                for attribute in attributes:
-                    paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
-                        base
-                        + [f"2:{group}"]
-                        + [f"2:{channel}"]
-                        + [f"2:{valtype}"]
-                        + [f"2:{attribute}"]
-                    )
+                for valtype in valtypes:
+                    if attribute == "Momentary":
+                        paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
+                            base + [f"2:{group}"] + [f"2:{channel}"] + [f"2:{valtype}"]
+                        )
+                    else:
+                        paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
+                            base
+                            + [f"2:{group}"]
+                            + [f"2:{channel}"]
+                            + [f"2:{valtype}"]
+                            + [f"2:{attribute}"]
+                        )
 
         elif opcua_objects[measurement] == Type.FREQUENCY:
-            if exist_and_true(measurements[measurement], "min"):
-                paths[f"{uid}/Freq/Minimum"] = (
-                    base + ["2:UG"] + ["2:Freq"] + ["2:Minimum"]
-                )
-            if exist_and_true(measurements[measurement], "max"):
-                paths[f"{uid}/Freq/Maximum"] = (
-                    base + ["2:UG"] + ["2:Freq"] + ["2:Maximum"]
-                )
-            if exist_and_true(measurements[measurement], "momentary"):
-                paths[f"{uid}/Freq/Momentary"] = base + ["2:UG"] + ["2:Freq"]
+            for attribute in attributes:
+                if attribute == "Momentary":
+                    paths[f"{uid}/Freq/Momentary"] = base + ["2:UG"] + ["2:Freq"]
+                else:
+                    paths[f"{uid}/Freq/{attribute}"] = (
+                        base + ["2:UG"] + ["2:Freq"] + [f"2:{attribute}"]
+                    )
 
     return paths
 
@@ -141,7 +131,7 @@ async def read_and_store(name, node, publishing_handler):
     publishing_handler.values[name] = value
 
 
-async def read_measurements(device, mode: Mode):
+async def read_measurements(device, opcua_ids, mode: Mode):
     """Create browse paths, onnect to the device and read the measurements at
     given sample rate.
 
@@ -155,18 +145,18 @@ async def read_measurements(device, mode: Mode):
     url = f"opc.tcp://{uri}:{port}"
     log_msg(f"Connecting to {url} ...")
 
-    browse_paths = construct_browse_paths(uid, device["measurements"])
+    browse_paths = construct_browse_paths(uid, opcua_ids)
     values = dict.fromkeys(browse_paths.keys())
 
+    log_msg(f"Browse paths: {browse_paths}")
+
     pub_handler = PublishingHandler(values)
-    # asyncio.run(pub_handler.send_values())
 
     async with Client(url=url) as client:
         nodes = {}
         node_ids = {}
 
         for measurement, browse_path in browse_paths.items():
-            log_msg(f"{measurement} : {browse_path}")
             nodes[measurement] = await client.nodes.root.get_child(browse_path)
             node_ids[nodeid_to_string(nodes[measurement].nodeid)] = measurement
 

@@ -1,0 +1,123 @@
+{
+  "nodes": {
+    "file_node": {
+      "format": "villas.human",
+      "type": "file",
+      "uri": "test-%Y%m%d_%H-%M-%S.log"
+    },
+    "mqtt_node_maximum": {
+      "format": "villas.human",
+      "host": "localhost",
+      "in": {
+        "subscribe": "empty_topic"
+      },
+      "out": {
+        "publish": "mp1_max"
+      },
+      "port": 1883,
+      "type": "mqtt"
+    },
+    "mqtt_node_minimum": {
+      "format": "villas.human",
+      "host": "localhost",
+      "in": {
+        "subscribe": "empty_topic"
+      },
+      "out": {
+        "publish": "mp1_min"
+      },
+      "port": 1883,
+      "type": "mqtt"
+    },
+    "mqtt_node_momentary": {
+      "format": "villas.human",
+      "host": "localhost",
+      "in": {
+        "subscribe": "empty_topic"
+      },
+      "out": {
+        "publish": "mp1_mom"
+      },
+      "port": 1883,
+      "type": "mqtt"
+    },
+    "opcua_mp1": {
+      "exec": [
+        "python",
+        "readout_umg801.py"
+      ],
+      "flush": true,
+      "format": "villas.human",
+      "in": {
+        "signals": [
+          {
+            "attr": "Momentary",
+            "name": "mp1_u1",
+            "opcua_id": "U1",
+            "type": "complex"
+          },
+          {
+            "attr": "Minimum",
+            "name": "mp1_u1_min",
+            "opcua_id": "U1",
+            "type": "complex"
+          },
+          {
+            "attr": "Maximum",
+            "name": "mp1_freq",
+            "opcua_id": "Freq",
+            "type": "float"
+          },
+          {
+            "attr": "Momentary",
+            "name": "mp1_i1",
+            "opcua_id": "IG1_I1",
+            "type": "complex"
+          },
+          {
+            "attr": "Maximum",
+            "name": "mp1_i1_max",
+            "opcua_id": "IG1_I1",
+            "type": "complex"
+          }
+        ]
+      },
+      "opcua_config": {
+        "mode": "SUBSCRIBE",
+        "port": 4840,
+        "sending_rate": 1.0,
+        "uid": "Janitza UMG801",
+        "uri": "janitza-umg.acs-lab.eonerc.rwth-aachen.de"
+      },
+      "type": "exec"
+    }
+  },
+  "paths": [
+    {
+      "in": [
+        "opcua_mp1.mp1_u1",
+        "opcua_mp1.mp1_freq",
+        "opcua_mp1.mp1_i1"
+      ],
+      "out": [
+        "mqtt_node_momentary"
+      ]
+    },
+    {
+      "in": [
+        "opcua_mp1.mp1_u1_min"
+      ],
+      "out": [
+        "mqtt_node_minimum"
+      ]
+    },
+    {
+      "in": [
+        "opcua_mp1.mp1_i1_min"
+      ],
+      "out": [
+        "mqtt_node_minimum"
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
 # SPDX-License-Identifier: Apache-2.0
 from schema import Or, Optional, Schema, SchemaError
-import yaml
+import json
 from enum import Enum
 
 from logger import log_msg
@@ -45,7 +45,7 @@ config_schema = Schema(
                 Optional("sending_rate"): float,
                 "measurements": {
                     lambda n: n
-                    in opcua_objects.keys(): {
+                    in opcua_objects: {
                         Optional("min"): bool,
                         Optional("max"): bool,
                         Optional("momentary"): bool,
@@ -57,16 +57,41 @@ config_schema = Schema(
 )
 
 
-def read_config(path: str, schema: Schema = config_schema):
-    """Read config file and validate it against the schema.
+def read_config(path: str):
+    """Read config from file.
 
     Arguments:
         path {str} -- Path to the config file"""
     with open(path, encoding="utf-8") as file:
-        config = yaml.safe_load(file)
-        try:
-            schema.validate(config)
-        except SchemaError as se:
-            log_msg("Config file is invalid!")
-            raise se
+        config = json.load(file)
+        log_msg(config)
     return config
+
+
+def validate_config(config: dict, schema: Schema = config_schema):
+    """Validate a config against the schema.
+
+    Arguments:
+        config {dict} -- Configuration to validate"""
+    try:
+        schema.validate(config)
+    except SchemaError as se:
+        log_msg("Config file is invalid!")
+        raise se
+
+
+def parse_opcua_ids(config: dict):
+    """Parse opc ids from config and return as dict.
+
+    Arguments:
+        config {dict} -- Configuration to parse
+
+    Returns:
+        dict -- Parsed opc ids as {id:topic}"""
+    ids = {}
+    for signal in config["in"]["signals"]:
+        if signal["opcua_id"] not in ids:
+            ids[signal["opcua_id"]] = list()
+
+        ids[signal["opcua_id"]].append(signal["attr"])
+    return ids

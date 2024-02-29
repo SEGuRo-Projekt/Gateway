@@ -13,6 +13,23 @@ class PublishingHandler:
         self.values = values
         self.last_time = 0
 
+    def __reduce_complex(self, values):
+        """
+        Reduce complex values to a single value.
+        """
+        reduced_complex = {}
+        for key, value in values.items():
+            if "Re" in key:
+                reduced_complex[key.replace("Re", "")] = str(value)
+            elif "Im" in key:
+                if str(value).startswith("-"):
+                    reduced_complex[key.replace("Im", "")] += str(value) + "i"
+                else:
+                    reduced_complex[key.replace("Im", "")] += "+" + str(value) + "i"
+            else:
+                reduced_complex[key] = value
+        return reduced_complex
+
     def send_values(self, _time, rate):
         """
         Send values to broker if the time delta is greater than the sending
@@ -36,12 +53,13 @@ class PublishingHandler:
         if time_delta > 1 / rate:
             # Print the values to STDOUT in the villas.human format:
             # {timestamp_s}.{timestamp_ns} {value1} {value2} ...
+            reduced_values = self.__reduce_complex(self.values)
             epoch_time = time.time_ns()
             epoch_s = str(epoch_time // 1_000_000_000)
             epoch_ns = str(epoch_time % 1_000_000_000).zfill(9)
             print(f"{epoch_s}.{epoch_ns}", end=" ")
 
-            print(" ".join(str(x) for x in list(self.values.values())), flush=True)
+            print(" ".join(str(x) for x in list(reduced_values.values())), flush=True)
 
             self.last_time = _time
         return time_delta
