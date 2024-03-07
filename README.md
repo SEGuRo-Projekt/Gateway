@@ -13,11 +13,6 @@ pip install .
 pip install -e .
 ```
 
-
-## MQTT Topics
-
-`measurements/<loc_id>/<measuring_device_id>/<measuring_point_id>`
-
 ## License
 
 - SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen  University\
