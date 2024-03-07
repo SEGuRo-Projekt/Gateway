@@ -3,11 +3,12 @@
 import asyncio
 import os
 
-from config_parser import read_config, parse_opcua_ids
-from logger import log_msg
-from subscription_handler import Mode, read_measurements
+from seguro.gateway.config_parser import read_config, parse_opcua_ids
+from seguro.gateway.logger import log_msg
+from seguro.gateway.subscription_handler import Mode, read_measurements
 
-if __name__ == "__main__":
+
+def main():
     VILLAS_NODE_CONFIG = os.environ["VILLAS_NODE_CONFIG"]
     VILLAS_NODE_NAME = os.environ["VILLAS_NODE_NAME"]
     log_msg(VILLAS_NODE_CONFIG)
@@ -30,3 +31,7 @@ if __name__ == "__main__":
             mode,
         )
     )
+
+
+if __name__ == "__main__":
+    main()

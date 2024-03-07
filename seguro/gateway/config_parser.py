@@ -4,7 +4,7 @@ from schema import Or, Optional, Schema, SchemaError
 import json
 from enum import Enum
 
-from logger import log_msg
+from seguro.gateway.logger import log_msg
 
 
 class Type(Enum):

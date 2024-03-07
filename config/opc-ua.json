@@ -5,8 +5,7 @@
             "format": "villas.human",
             "flush": true,
             "exec": [
-                "python",
-                "seguro/gateway/readout_umg.py"
+                "readout_umg"
             ],
 
             "in": {

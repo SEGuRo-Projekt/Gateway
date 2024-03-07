@@ -6,9 +6,9 @@ import time
 from enum import Enum
 from asyncua import Client
 
-from config_parser import Type, opcua_objects
-from publishing_handler import PublishingHandler
-from logger import log_msg
+from seguro.gateway.config_parser import Type, opcua_objects
+from seguro.gateway.publishing_handler import PublishingHandler
+from seguro.gateway.logger import log_msg
 
 
 class Mode(Enum):
