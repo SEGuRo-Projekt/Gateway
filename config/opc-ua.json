@@ -6,7 +6,7 @@
             "flush": true,
             "exec": [
                 "python",
-                "./src/readout_umg.py"
+                "seguro/gateway/readout_umg.py"
             ],
 
             "in": {

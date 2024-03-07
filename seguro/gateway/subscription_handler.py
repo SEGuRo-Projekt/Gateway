@@ -190,51 +190,20 @@ async def read_measurements(device, opcua_ids, mode: Mode):
                 pub_handler.send_values(time.time(), device["sending_rate"])
 
 
-<<<<<<<< HEAD:seguro/gateway/readout_umg801.py
-def main():
-    parser = argparse.ArgumentParser(
-        description="Read measurements from UMG801 and print results to STDOUT."
-    )
-    parser.add_argument("CONFIG", type=str, help="Path to config file.")
-    parser.add_argument(
-        "--mode",
-        "-m",
-        metavar="MODE",
-        type=str,
-        nargs="?",
-        default="SUBSCRIBE",
-        choices=["SUBSCRIBE", "GATHER"],
-        help="Mode to read measurements via OPC UA. Can be SUBSCRIBE or GATHER.",
-    )
-    args = parser.parse_args()
-========
 class SubscriptionHandler:
     """
     The SubscriptionHandler is used to handle the data that is received for the
     subscription.
     """
->>>>>>>> d8db7a0 (WIP: refactor code into multiple modules):src/subscription_handler.py
 
     def __init__(self, node_ids: dict, publish_handler: PublishingHandler):
         self.node_ids = node_ids
         self.counter = 0
         self.values = publish_handler.values
 
-<<<<<<<< HEAD:seguro/gateway/readout_umg801.py
-    conf = read_config(args.CONFIG, config_schema)
-    mode = Mode[args.mode]
-
-    for dev in conf["devices"]:
-        asyncio.run(read_measurements(dev, mode))
-
-
-if __name__ == "__main__":
-    main()
-========
     def datachange_notification(self, node, val, data):
         """
         Callback for the data change notification. Stores updated values in the
         values dict.
         """
         self.values[self.node_ids[nodeid_to_string(node.nodeid)]] = val
->>>>>>>> d8db7a0 (WIP: refactor code into multiple modules):src/subscription_handler.py
