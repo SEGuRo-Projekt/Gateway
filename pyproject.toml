@@ -31,4 +31,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-readout_umg801 = "seguro.gateway.readout_umg801:main"
+readout_umg = "seguro.gateway.readout_umg:main"

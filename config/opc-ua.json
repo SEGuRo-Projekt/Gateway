@@ -1,0 +1,83 @@
+{
+    "nodes": {
+        "opcua_md1": {
+            "type": "exec",
+            "format": "villas.human",
+            "flush": true,
+            "exec": [
+                "readout_umg"
+            ],
+
+            "in": {
+                "signals": [
+                    { "name": "md1_u1", "opcua_id": "U1", "type": "complex", "attr": "Momentary" },
+                    { "name": "md1_u2", "opcua_id": "U2", "type": "complex", "attr": "Momentary" },
+                    { "name": "md1_u3", "opcua_id": "U3", "type": "complex", "attr": "Momentary" },
+
+                    { "name": "mp1_i1", "opcua_id": "IG1_I1", "type": "complex", "attr": "Momentary"},
+                    { "name": "mp1_i2", "opcua_id": "IG1_I2", "type": "complex", "attr": "Momentary"},
+                    { "name": "mp1_i3", "opcua_id": "IG1_I3", "type": "complex", "attr": "Momentary"},
+
+                    { "name": "mp2_i1", "opcua_id": "IG1_I4", "type": "complex", "attr": "Momentary"},
+                    { "name": "mp2_i2", "opcua_id": "IG2_I1", "type": "complex", "attr": "Momentary"},
+                    { "name": "mp2_i3", "opcua_id": "IG2_I2", "type": "complex", "attr": "Momentary"}
+                ]
+            },
+            "opcua_config": {
+                "uid": "Janitza UMG801",
+                "uri": "janitza-umg.acs-lab.eonerc.rwth-aachen.de",
+                "port": 4840,
+                "sending_rate": 1.0,
+                "mode": "SUBSCRIBE"
+            }
+        },
+        "mqtt_node_mp1": {
+            "type": "mqtt",
+            "format": "protobuf",
+            "host": "localhost",
+            "port": 1883,
+            "out" : {
+                "publish" : "measurements/loc1/ms1/mp1"
+            }
+        },
+        "mqtt_node_mp2": {
+            "type": "mqtt",
+            "format": "protobuf",
+            "host": "localhost",
+            "port": 1883,
+            "out" : {
+                "publish" : "measurements/loc1/ms1/mp2"
+            }
+        }
+
+    },
+    "paths": [
+        {
+            "in": [
+                "opcua_md1.md1_u1",
+                "opcua_md1.md1_u2",
+                "opcua_md1.md1_u3",
+                "opcua_md1.mp1_i1",
+                "opcua_md1.mp1_i2",
+                "opcua_md1.mp1_i3"
+            ],
+            "out": [
+                "mqtt_node_mp1"
+            ]
+        },
+        {
+            "in": [
+                "opcua_md1.md1_u1",
+                "opcua_md1.md1_u2",
+                "opcua_md1.md1_u3",
+                "opcua_md1.mp2_i1",
+                "opcua_md1.mp2_i2",
+                "opcua_md1.mp2_i3"
+            ],
+            "out": [
+                "mqtt_node_mp2"
+            ]
+        }
+
+    ]
+}
