@@ -4,7 +4,7 @@ import asyncio
 import os
 
 from config_parser import read_config, parse_opcua_ids
-from logging import log_msg
+from logger import log_msg
 from subscription_handler import Mode, read_measurements
 
 if __name__ == "__main__":

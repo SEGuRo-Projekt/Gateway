@@ -8,7 +8,7 @@ from asyncua import Client
 
 from config_parser import Type, opcua_objects
 from publishing_handler import PublishingHandler
-from logging import log_msg
+from logger import log_msg
 
 
 class Mode(Enum):
