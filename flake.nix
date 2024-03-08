@@ -196,25 +196,21 @@
           modules = [
             ({self, ...}: {
               imports = [
-                # Include the results of the hardware scan.
                 self.nixosModules.gateway
               ];
 
-              # Use the systemd-boot EFI boot loader.
-              boot.loader.systemd-boot.enable = true;
-              boot.loader.efi.canTouchEfiVariables = true;
-
-              services.villas.node = {
-                enable = true;
+              boot.loader = {
+                systemd-boot.enable = true;
+                efi.canTouchEfiVariables = true;
               };
 
-              users.users.alice = {
+              users.users.villas = {
                 isNormalUser = true;
                 extraGroups = ["wheel"];
-                initialPassword = "test3";
+                initialPassword = "villas";
               };
 
-              system.stateVersion = "23.11"; # Did you read the comment?
+              system.stateVersion = "23.11";
             })
           ];
           specialArgs = {
