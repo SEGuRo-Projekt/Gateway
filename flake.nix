@@ -24,7 +24,7 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       p2n = poetry2nix.lib.mkPoetry2Nix {inherit pkgs;};
-      inherit (p2n) mkPoetryApplication;
+      inherit (p2n) mkPoetryApplication mkPoetryEnv;
     in rec {
       packages = {
         # A simple shell script which transforms one JSON file into another using
@@ -86,12 +86,15 @@
 
       # A development shell to be used with `nix develop`
       devShells.default = pkgs.mkShell {
-        inputsFrom = [
-          self.packages.${system}.seguro-gateway
+        buildInputs = [
+          (mkPoetryEnv {
+            projectDir = ./.;
+            editablePackageSources = {
+              seguro = ./seguro;
+            };
+            preferWheels = true;
+          })
         ];
-        shellHook = ''
-          export QEMU_KERNEL_PARAMS=console=ttyS0
-        '';
 
         packages =
           (with pkgs; [
