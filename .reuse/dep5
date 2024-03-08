@@ -3,6 +3,6 @@ Upstream-Name: SEGuRo Gateway
 Upstream-Contact: Felix Wege <felix.wege@eonerc.rwth-aachen.de>
 Source: https://github.com/SEGuRo-Projekt/Plattform
 
-Files: flake.lock poetry.lock *.json
+Files: flake.lock poetry.lock config/*.json
 Copyright: 2023 Steffen Vogel, OPAL-RT Germany GmbH
 License: Apache-2.0
