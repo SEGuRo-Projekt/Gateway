@@ -110,8 +110,19 @@
                 text = ''
                   set -e
 
+                  # Enter repo root
+                  pushd "''$(git rev-parse --show-toplevel)"
+
+                  # Use serial console
+                  export QEMU_KERNEL_PARAMS=console=ttyS0
+
+                  # Rebuild VM
                   nixos-rebuild --flake .\#default build-vm
+
+                  # Run VM
                   ./result/bin/run-nixos-vm -nographic
+
+                  # Reset Terminal
                   reset
                 '';
               })

@@ -7,32 +7,30 @@ Scripts for the measurement data transmission to the SEGuRo platform
 pip install .
 ```
 
-### Nix
+## Nix
+
+### Enter development shell
+
+Either by running:
 
 ```shell
-nix profile install \
-  .\#villas-config-generator \
-  .\#seguro-gateway
-
-PATH=$PATH:~/.nix-profile/bin
-
-villas-config-generator < config.json > config_villas.json
-
-readout_umg
-
-# Or directly without installing:
-nix run .\#villas-config-generator < config.json > config_villas.json
-
-nix run .\#seguro-gateway
+nix develop
 ```
 
-#### Test in VM
-
-Simply run:
+or by installing [direnv](https://direnv.net/) and running:
 
 ```shell
-start-vm
+direnv allow
 ```
+
+Inside the development shell you can directly work on the Python code or use the following commands:
+
+- Run Python gateway code: `readout_umg`
+- Render Nix template expression: `nix-render-template template.nix < input.json > output.json`
+- Generate VILLASndoe config from Gateway config: `villas-generate-gateway-config < gateway.json > villas-node.json`
+- Start a full-fledged VM to test the configuration of VILLASnode `start-vm`
+
+### Virtual Machine
 
 Login credentials are: `villas` / `villas`
 
@@ -44,6 +42,8 @@ systemctl status villas-node
 cat /boot/gateway.json
 cat /boot/villas-config.json
 ```
+
+You can exit the VM console by `Ctrl+A + X`.
 
 ## Development
 
