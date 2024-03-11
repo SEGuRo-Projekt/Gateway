@@ -3,7 +3,11 @@
 import asyncio
 import os
 
-from seguro.gateway.config_parser import read_config, parse_opcua_objects
+from seguro.gateway.config_parser import (
+    read_config,
+    parse_opcua_objects,
+    validate_config,
+)
 from seguro.gateway.logger import log_msg
 from seguro.gateway.subscription_handler import Mode, read_measurements
 
@@ -17,8 +21,10 @@ def main():
 
     vn_conf = read_config(VILLAS_NODE_CONFIG)["nodes"][VILLAS_NODE_NAME]
     opcua_objects = parse_opcua_objects(vn_conf)
-    device_conf = vn_conf["opcua"]
-    mode = Mode[device_conf["mode"]]
+    device_conf = validate_config(vn_conf["opcua"])
+    mode = (
+        Mode[device_conf["mode"]] if "mode" in device_conf.keys() else Mode["SUBSCRIBE"]
+    )
 
     log_msg(f"Reading measurements in mode {mode}.")
     log_msg(f"Device configuration: {device_conf}")

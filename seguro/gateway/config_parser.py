@@ -43,24 +43,13 @@ opcua_objects = {
 
 config_schema = Schema(
     {
-        "devices": [
-            {
-                "uid": str,
-                Optional("name"): str,
-                Optional("description"): str,
-                "uri": str,
-                "port": Or(int, str),
-                Optional("sending_rate"): float,
-                "measurements": {
-                    lambda n: n
-                    in opcua_objects: {
-                        Optional("min"): bool,
-                        Optional("max"): bool,
-                        Optional("momentary"): bool,
-                    }
-                },
-            }
-        ]
+        "uid": str,
+        Optional("name"): str,
+        Optional("description"): str,
+        "uri": str,
+        "port": Or(int, str),
+        Optional("sending_rate"): float,
+        Optional("mode"): Or("SUBSCRIBE", "GATHER"),
     }
 )
 
@@ -86,6 +75,7 @@ def validate_config(config: dict, schema: Schema = config_schema):
     except SchemaError as se:
         log_msg("Config file is invalid!")
         raise se
+    return config
 
 
 def parse_opcua_objects(config: dict):
