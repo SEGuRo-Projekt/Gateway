@@ -30,6 +30,14 @@ opcua_objects = {
     "IG3_I2": Type.CURRENT,
     "IG3_I3": Type.CURRENT,
     "IG3_I4": Type.CURRENT,
+    "Module1_IG1_I1": Type.CURRENT,
+    "Module1_IG1_I2": Type.CURRENT,
+    "Module1_IG1_I3": Type.CURRENT,
+    "Module1_IG1_I4": Type.CURRENT,
+    "Module1_IG2_I1": Type.CURRENT,
+    "Module1_IG2_I2": Type.CURRENT,
+    "Module1_IG2_I3": Type.CURRENT,
+    "Module1_IG2_I4": Type.CURRENT,
 }
 
 
@@ -80,7 +88,7 @@ def validate_config(config: dict, schema: Schema = config_schema):
         raise se
 
 
-def parse_opcua_ids(config: dict):
+def parse_opcua_objects(config: dict):
     """Parse opc ids from config and return as dict.
 
     Arguments:
@@ -90,8 +98,8 @@ def parse_opcua_ids(config: dict):
         dict -- Parsed opc ids as {id:topic}"""
     ids = {}
     for signal in config["in"]["signals"]:
-        if signal["opcua_id"] not in ids:
-            ids[signal["opcua_id"]] = list()
+        if signal["opcua_obj"] not in ids:
+            ids[signal["opcua_obj"]] = list()
 
-        ids[signal["opcua_id"]].append(signal["opcua_attr"])
+        ids[signal["opcua_obj"]].append(signal["opcua_attr"])
     return ids
