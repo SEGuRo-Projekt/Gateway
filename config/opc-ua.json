@@ -10,20 +10,20 @@
 
             "in": {
                 "signals": [
-                    { "name": "md1_u1", "opcua_id": "U1", "type": "complex", "attr": "Momentary" },
-                    { "name": "md1_u2", "opcua_id": "U2", "type": "complex", "attr": "Momentary" },
-                    { "name": "md1_u3", "opcua_id": "U3", "type": "complex", "attr": "Momentary" },
+                    { "name": "md1_u1", "type": "complex", "opcua_id": "U1",  "opcua_attr": "Momentary" },
+                    { "name": "md1_u2", "type": "complex", "opcua_id": "U2",  "opcua_attr": "Momentary" },
+                    { "name": "md1_u3", "type": "complex", "opcua_id": "U3",  "opcua_attr": "Momentary" },
 
-                    { "name": "mp1_i1", "opcua_id": "IG1_I1", "type": "complex", "attr": "Momentary"},
-                    { "name": "mp1_i2", "opcua_id": "IG1_I2", "type": "complex", "attr": "Momentary"},
-                    { "name": "mp1_i3", "opcua_id": "IG1_I3", "type": "complex", "attr": "Momentary"},
+                    { "name": "mp1_i1", "type": "complex", "opcua_id": "IG1_I1", "opcua_attr": "Momentary"},
+                    { "name": "mp1_i2", "type": "complex", "opcua_id": "IG1_I2", "opcua_attr": "Momentary"},
+                    { "name": "mp1_i3", "type": "complex", "opcua_id": "IG1_I3", "opcua_attr": "Momentary"},
 
-                    { "name": "mp2_i1", "opcua_id": "IG1_I4", "type": "complex", "attr": "Momentary"},
-                    { "name": "mp2_i2", "opcua_id": "IG2_I1", "type": "complex", "attr": "Momentary"},
-                    { "name": "mp2_i3", "opcua_id": "IG2_I2", "type": "complex", "attr": "Momentary"}
+                    { "name": "mp2_i1", "type": "complex", "opcua_id": "IG1_I4", "opcua_attr": "Momentary"},
+                    { "name": "mp2_i2", "type": "complex", "opcua_id": "IG2_I1", "opcua_attr": "Momentary"},
+                    { "name": "mp2_i3", "type": "complex", "opcua_id": "IG2_I2", "opcua_attr": "Momentary"}
                 ]
             },
-            "opcua_config": {
+            "opcua": {
                 "uid": "Janitza UMG801",
                 "uri": "janitza-umg.acs-lab.eonerc.rwth-aachen.de",
                 "port": 4840,

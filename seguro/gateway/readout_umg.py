@@ -17,7 +17,7 @@ def main():
 
     vn_conf = read_config(VILLAS_NODE_CONFIG)["nodes"][VILLAS_NODE_NAME]
     opcua_ids = parse_opcua_ids(vn_conf)
-    device_conf = vn_conf["opcua_config"]
+    device_conf = vn_conf["opcua"]
     mode = Mode[device_conf["mode"]]
 
     log_msg(f"Reading measurements in mode {mode}.")

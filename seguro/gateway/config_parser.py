@@ -93,5 +93,5 @@ def parse_opcua_ids(config: dict):
         if signal["opcua_id"] not in ids:
             ids[signal["opcua_id"]] = list()
 
-        ids[signal["opcua_id"]].append(signal["attr"])
+        ids[signal["opcua_id"]].append(signal["opcua_attr"])
     return ids
