@@ -10,17 +10,17 @@
 
             "in": {
                 "signals": [
-                    { "name": "md1_u1", "type": "complex", "opcua_id": "U1",  "opcua_attr": "Momentary" },
-                    { "name": "md1_u2", "type": "complex", "opcua_id": "U2",  "opcua_attr": "Momentary" },
-                    { "name": "md1_u3", "type": "complex", "opcua_id": "U3",  "opcua_attr": "Momentary" },
+                    { "name": "md1_u1", "type": "complex", "opcua_obj": "U1",  "opcua_attr": "Momentary" },
+                    { "name": "md1_u2", "type": "complex", "opcua_obj": "U2",  "opcua_attr": "Momentary" },
+                    { "name": "md1_u3", "type": "complex", "opcua_obj": "U3",  "opcua_attr": "Momentary" },
 
-                    { "name": "mp1_i1", "type": "complex", "opcua_id": "IG1_I1", "opcua_attr": "Momentary"},
-                    { "name": "mp1_i2", "type": "complex", "opcua_id": "IG1_I2", "opcua_attr": "Momentary"},
-                    { "name": "mp1_i3", "type": "complex", "opcua_id": "IG1_I3", "opcua_attr": "Momentary"},
+                    { "name": "mp1_i1", "type": "complex", "opcua_obj": "IG1_I1", "opcua_attr": "Momentary"},
+                    { "name": "mp1_i2", "type": "complex", "opcua_obj": "IG1_I2", "opcua_attr": "Momentary"},
+                    { "name": "mp1_i3", "type": "complex", "opcua_obj": "IG1_I3", "opcua_attr": "Momentary"},
 
-                    { "name": "mp2_i1", "type": "complex", "opcua_id": "IG1_I4", "opcua_attr": "Momentary"},
-                    { "name": "mp2_i2", "type": "complex", "opcua_id": "IG2_I1", "opcua_attr": "Momentary"},
-                    { "name": "mp2_i3", "type": "complex", "opcua_id": "IG2_I2", "opcua_attr": "Momentary"}
+                    { "name": "mp2_i1", "type": "complex", "opcua_obj": "IG1_I4", "opcua_attr": "Momentary"},
+                    { "name": "mp2_i2", "type": "complex", "opcua_obj": "IG2_I1", "opcua_attr": "Momentary"},
+                    { "name": "mp2_i3", "type": "complex", "opcua_obj": "IG2_I2", "opcua_attr": "Momentary"}
                 ]
             },
             "opcua": {
