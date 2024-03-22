@@ -1,0 +1,192 @@
+{
+  "nodes": {
+    "mqtt_md1_mp1": {
+      "format": "protobuf",
+      "host": "localhost",
+      "out": {
+        "publish": "measurements/loc1/md1/mp1"
+      },
+      "port": 1883,
+      "type": "mqtt"
+    },
+    "mqtt_md1_mp2": {
+      "format": "protobuf",
+      "host": "localhost",
+      "out": {
+        "publish": "measurements/loc1/md1/mp2"
+      },
+      "port": 1883,
+      "type": "mqtt"
+    },
+    "mqtt_md2_mp1": {
+      "format": "protobuf",
+      "host": "localhost",
+      "out": {
+        "publish": "measurements/loc1/md2/mp1"
+      },
+      "port": 1883,
+      "type": "mqtt"
+    },
+    "opcua_md1": {
+      "exec": [
+        "readout_umg"
+      ],
+      "flush": true,
+      "format": "villas.human",
+      "in": {
+        "signals": [
+          {
+            "name": "u1",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "U1",
+            "type": "complex"
+          },
+          {
+            "name": "u2",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "U2",
+            "type": "complex"
+          },
+          {
+            "name": "u3",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "U3",
+            "type": "complex"
+          },
+          {
+            "name": "ig1_i1",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG1_I1",
+            "type": "complex"
+          },
+          {
+            "name": "ig1_i2",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG1_I2",
+            "type": "complex"
+          },
+          {
+            "name": "ig1_i3",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG1_I3",
+            "type": "complex"
+          },
+          {
+            "name": "ig1_i4",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG1_I4",
+            "type": "complex"
+          },
+          {
+            "name": "ig2_i1",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG2_I1",
+            "type": "complex"
+          },
+          {
+            "name": "ig2_i2",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG2_I2",
+            "type": "complex"
+          }
+        ]
+      },
+      "opcua_config": {
+        "port": 4840,
+        "sending_rate": 100,
+        "uid": "md1",
+        "uri": "janitza-umg-uv1.acs-lab.eonerc.rwth-aachen.de"
+      },
+      "type": "exec"
+    },
+    "opcua_md2": {
+      "exec": [
+        "readout_umg"
+      ],
+      "flush": true,
+      "format": "villas.human",
+      "in": {
+        "signals": [
+          {
+            "name": "u1",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "U1",
+            "type": "complex"
+          },
+          {
+            "name": "u2",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "U2",
+            "type": "complex"
+          },
+          {
+            "name": "u3",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "U3",
+            "type": "complex"
+          },
+          {
+            "name": "ig1_i1",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG1_I1",
+            "type": "complex"
+          },
+          {
+            "name": "ig1_i2",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG1_I2",
+            "type": "complex"
+          },
+          {
+            "name": "ig1_i3",
+            "opcua_attr": "Momentary",
+            "opcua_obj": "IG1_I3",
+            "type": "complex"
+          }
+        ]
+      },
+      "opcua_config": {
+        "port": 4840,
+        "sending_rate": 100,
+        "uid": "md2",
+        "uri": "janitza-umg-uv2.acs-lab.eonerc.rwth-aachen.de"
+      },
+      "type": "exec"
+    }
+  },
+  "paths": [
+    {
+      "in": [
+        "opcua_md1.u1",
+        "opcua_md1.u2",
+        "opcua_md1.u3",
+        "opcua_md1.ig1_i1",
+        "opcua_md1.ig1_i2",
+        "opcua_md1.ig1_i3"
+      ],
+      "out": "mqtt_md1_mp1"
+    },
+    {
+      "in": [
+        "opcua_md1.u1",
+        "opcua_md1.u2",
+        "opcua_md1.u3",
+        "opcua_md1.ig1_i4",
+        "opcua_md1.ig2_i1",
+        "opcua_md1.ig2_i2"
+      ],
+      "out": "mqtt_md1_mp2"
+    },
+    {
+      "in": [
+        "opcua_md2.u1",
+        "opcua_md2.u2",
+        "opcua_md2.u3",
+        "opcua_md2.ig1_i1",
+        "opcua_md2.ig1_i2",
+        "opcua_md2.ig1_i3"
+      ],
+      "out": "mqtt_md2_mp1"
+    }
+  ]
+}

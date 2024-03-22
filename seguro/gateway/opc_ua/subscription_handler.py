@@ -6,9 +6,9 @@ import time
 from enum import Enum
 from asyncua import Client
 
-from seguro.gateway.config_parser import Type, opcua_objects
-from seguro.gateway.publishing_handler import PublishingHandler
-from seguro.gateway.logger import log_msg
+from seguro.gateway.opc_ua.config_parser import Type, opcua_objects
+from seguro.gateway.opc_ua.publishing_handler import PublishingHandler
+from seguro.gateway.opc_ua.logger import log_msg
 
 
 class Mode(Enum):
@@ -64,7 +64,10 @@ def construct_browse_paths(uid: str, measurements: dict):
                 for valtype in valtypes:
                     if attribute == "Momentary":
                         paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
-                            base + ["2:UG"] + [f"2:{measurement}"] + [f"2:{valtype}"]
+                            base
+                            + ["2:UG"]
+                            + [f"2:{measurement}"]
+                            + [f"2:{valtype}"]
                         )
                     else:
                         paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
@@ -102,7 +105,10 @@ def construct_browse_paths(uid: str, measurements: dict):
                 for valtype in valtypes:
                     if attribute == "Momentary":
                         paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
-                            base + [f"2:{group}"] + [f"2:{channel}"] + [f"2:{valtype}"]
+                            base
+                            + [f"2:{group}"]
+                            + [f"2:{channel}"]
+                            + [f"2:{valtype}"]
                         )
                     else:
                         paths[f"{uid}/{measurement}/{valtype}/{attribute}"] = (
@@ -116,7 +122,9 @@ def construct_browse_paths(uid: str, measurements: dict):
         elif opcua_objects[measurement] == Type.FREQUENCY:
             for attribute in attributes:
                 if attribute == "Momentary":
-                    paths[f"{uid}/Freq/Momentary"] = base + ["2:UG"] + ["2:Freq"]
+                    paths[f"{uid}/Freq/Momentary"] = (
+                        base + ["2:UG"] + ["2:Freq"]
+                    )
                 else:
                     paths[f"{uid}/Freq/{attribute}"] = (
                         base + ["2:UG"] + ["2:Freq"] + [f"2:{attribute}"]

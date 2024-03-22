@@ -1,83 +1,55 @@
 {
-    "nodes": {
-        "opcua_md1": {
-            "type": "exec",
-            "format": "villas.human",
-            "flush": true,
-            "exec": [
-                "readout_umg"
-            ],
+  "uid": "loc1",
 
-            "in": {
-                "signals": [
-                    { "name": "md1_u1", "type": "complex", "opcua_obj": "U1",  "opcua_attr": "Momentary" },
-                    { "name": "md1_u2", "type": "complex", "opcua_obj": "U2",  "opcua_attr": "Momentary" },
-                    { "name": "md1_u3", "type": "complex", "opcua_obj": "U3",  "opcua_attr": "Momentary" },
-
-                    { "name": "mp1_i1", "type": "complex", "opcua_obj": "IG1_I1", "opcua_attr": "Momentary"},
-                    { "name": "mp1_i2", "type": "complex", "opcua_obj": "IG1_I2", "opcua_attr": "Momentary"},
-                    { "name": "mp1_i3", "type": "complex", "opcua_obj": "IG1_I3", "opcua_attr": "Momentary"},
-
-                    { "name": "mp2_i1", "type": "complex", "opcua_obj": "IG1_I4", "opcua_attr": "Momentary"},
-                    { "name": "mp2_i2", "type": "complex", "opcua_obj": "IG2_I1", "opcua_attr": "Momentary"},
-                    { "name": "mp2_i3", "type": "complex", "opcua_obj": "IG2_I2", "opcua_attr": "Momentary"}
-                ]
-            },
-            "opcua": {
-                "uid": "Janitza UMG801",
-                "uri": "janitza-umg.acs-lab.eonerc.rwth-aachen.de",
-                "port": 4840,
-                "sending_rate": 1.0,
-                "mode": "SUBSCRIBE"
-            }
+  "devices": [
+    {
+      "description": "Measurement device in ACS laboratory - Unterverteilung 1",
+      "name": "Janitza UMG 801",
+      "uid": "md1",
+      "points": [
+        {
+          "uid": "mp1",
+          "channels": [
+            "U1",
+            "U2",
+            "U3",
+            "IG1_I1",
+            "IG1_I2",
+            "IG1_I3"
+          ]
         },
-        "mqtt_node_mp1": {
-            "type": "mqtt",
-            "format": "protobuf",
-            "host": "localhost",
-            "port": 1883,
-            "out" : {
-                "publish" : "measurements/loc1/ms1/mp1"
-            }
-        },
-        "mqtt_node_mp2": {
-            "type": "mqtt",
-            "format": "protobuf",
-            "host": "localhost",
-            "port": 1883,
-            "out" : {
-                "publish" : "measurements/loc1/ms1/mp2"
-            }
+        {
+          "uid": "mp2",
+          "channels": [
+            "U1",
+            "U2",
+            "U3",
+            "IG1_I4",
+            "IG2_I1",
+            "IG2_I2"
+          ]
         }
-
+      ],
+      "uri": "janitza-umg-uv1.acs-lab.eonerc.rwth-aachen.de"
     },
-    "paths": [
+    {
+      "description": "Measurement device in ACS laboratory - Unterverteilung 2",
+      "name": "Janitza UMG 801",
+      "uid": "md2",
+      "points": [
         {
-            "in": [
-                "opcua_md1.md1_u1",
-                "opcua_md1.md1_u2",
-                "opcua_md1.md1_u3",
-                "opcua_md1.mp1_i1",
-                "opcua_md1.mp1_i2",
-                "opcua_md1.mp1_i3"
-            ],
-            "out": [
-                "mqtt_node_mp1"
-            ]
-        },
-        {
-            "in": [
-                "opcua_md1.md1_u1",
-                "opcua_md1.md1_u2",
-                "opcua_md1.md1_u3",
-                "opcua_md1.mp2_i1",
-                "opcua_md1.mp2_i2",
-                "opcua_md1.mp2_i3"
-            ],
-            "out": [
-                "mqtt_node_mp2"
-            ]
+          "uid": "mp1",
+          "channels": [
+            "U1",
+            "U2",
+            "U3",
+            "IG1_I1",
+            "IG1_I2",
+            "IG1_I3"
+          ]
         }
-
-    ]
+      ],
+      "uri": "janitza-umg-uv2.acs-lab.eonerc.rwth-aachen.de"
+    }
+  ]
 }

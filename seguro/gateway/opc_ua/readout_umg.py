@@ -23,7 +23,9 @@ def main():
     opcua_objects = parse_opcua_objects(vn_conf)
     device_conf = validate_config(vn_conf["opcua"])
     mode = (
-        Mode[device_conf["mode"]] if "mode" in device_conf.keys() else Mode["SUBSCRIBE"]
+        Mode[device_conf["mode"]]
+        if "mode" in device_conf.keys()
+        else Mode["SUBSCRIBE"]
     )
 
     log_msg(f"Reading measurements in mode {mode}.")

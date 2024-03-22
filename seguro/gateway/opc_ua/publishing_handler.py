@@ -25,7 +25,9 @@ class PublishingHandler:
                 if str(value).startswith("-"):
                     reduced_complex[key.replace("Im", "")] += str(value) + "i"
                 else:
-                    reduced_complex[key.replace("Im", "")] += "+" + str(value) + "i"
+                    reduced_complex[key.replace("Im", "")] += (
+                        "+" + str(value) + "i"
+                    )
             else:
                 reduced_complex[key] = value
         return reduced_complex
@@ -59,7 +61,10 @@ class PublishingHandler:
             epoch_ns = str(epoch_time % 1_000_000_000).zfill(9)
             print(f"{epoch_s}.{epoch_ns}", end=" ")
 
-            print(" ".join(str(x) for x in list(reduced_values.values())), flush=True)
+            print(
+                " ".join(str(x) for x in list(reduced_values.values())),
+                flush=True,
+            )
 
             self.last_time = _time
         return time_delta

@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "ethercat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1694079333,
+        "narHash": "sha256-6F3zBhnU4CFpiO+Cnbd6ecUuiGH/KUntpPfuSYZ+rAI=",
+        "owner": "etherlab.org",
+        "repo": "ethercat",
+        "rev": "722b2d607c4fc004ebf5204aaede0059c02274f4",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "etherlab.org",
+        "ref": "stable-1.5",
+        "repo": "ethercat",
+        "type": "gitlab"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -36,6 +53,59 @@
         "type": "github"
       }
     },
+    "lib60870": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1672404819,
+        "narHash": "sha256-9o+gWQbpCJb+UZzPNmzGqpWD0QbGjg41is/f1POUEQs=",
+        "owner": "mz-automation",
+        "repo": "lib60870",
+        "rev": "53a6b3c1cf3023e51cf81763b1ccf048edcd1c64",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mz-automation",
+        "ref": "v2.3.2",
+        "repo": "lib60870",
+        "type": "github"
+      }
+    },
+    "libdatachannel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1683797946,
+        "narHash": "sha256-kSK+5gFMG6tq89R1m08gNBKPdwyR/mLEDhWXQ/uk34o=",
+        "ref": "refs/tags/v0.18.4",
+        "rev": "7a5e01071ae635e06f175233abd11d623f09cbb8",
+        "revCount": 2459,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/paullouisageneau/libdatachannel.git"
+      },
+      "original": {
+        "ref": "refs/tags/v0.18.4",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/paullouisageneau/libdatachannel.git"
+      }
+    },
+    "libiec61850": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1647022552,
+        "narHash": "sha256-1vT0ry6IJqilpM7g9l7fx+ET+Dyo24WAyWqTyPM9nQw=",
+        "owner": "mz-automation",
+        "repo": "libiec61850",
+        "rev": "210cf30897631fe2006ac50483caf8fd616622a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mz-automation",
+        "ref": "v1.5.1",
+        "repo": "libiec61850",
+        "type": "github"
+      }
+    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -59,16 +129,32 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1708984720,
-        "narHash": "sha256-gJctErLbXx4QZBBbGp78PxtOOzsDaQ+yw1ylNQBuSUY=",
+        "lastModified": 1709677081,
+        "narHash": "sha256-tix36Y7u0rkn6mTm0lA45b45oab2cFLqAzDbJxeXS+c=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "13aff9b34cc32e59d35c62ac9356e4a41198a538",
+        "rev": "880992dcc006a5e00dd0591446fdf723e6a51a64",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "ref": "nixos-23.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1709899623,
+        "narHash": "sha256-gZgDebsCZJF6Z0rm6BQVnm8ThIaiSmYukGaV0Iw8YEU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "3030c33c68a0826148335b72fc8bb734ff20c520",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "release-23.11",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -101,7 +187,8 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
-        "poetry2nix": "poetry2nix"
+        "poetry2nix": "poetry2nix",
+        "villas-node": "villas-node"
       }
     },
     "systems": {
@@ -166,6 +253,29 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "villas-node": {
+      "inputs": {
+        "ethercat": "ethercat",
+        "lib60870": "lib60870",
+        "libdatachannel": "libdatachannel",
+        "libiec61850": "libiec61850",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1709924228,
+        "narHash": "sha256-xm9nnLqXxmR2eZZOLMCyBX1kq8UNL6TmnB27nYFSvxw=",
+        "owner": "VILLASframework",
+        "repo": "node",
+        "rev": "c42f25c5191be062eb02c6abdfa11b82506754bd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "VILLASframework",
+        "ref": "nixos-module-config-path",
+        "repo": "node",
         "type": "github"
       }
     }
