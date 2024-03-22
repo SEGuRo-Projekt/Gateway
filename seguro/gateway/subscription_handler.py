@@ -78,8 +78,27 @@ def construct_browse_paths(uid: str, measurements: dict):
         elif opcua_objects[measurement] == Type.CURRENT:
             valtypes = ["IComplexRe", "IComplexIm"]
             for attribute in attributes:
-                # for attribute in attributes:
-                group, channel = measurement.split("_")
+
+                keywords = measurement.split("_")
+                module = None
+                if len(keywords) == 3:
+                    module, group, channel = keywords
+                    base = [
+                        "0:Objects",
+                        "2:Device",
+                        "2:Modules",
+                        f"2:{module}",
+                        "2:Measurements",
+                    ]
+                elif len(keywords) == 2:
+                    group, channel = keywords
+                    base = ["0:Objects", "2:Device", "2:Measurements"]
+
+                else:
+                    raise ValueError(
+                        "Allowed current measurement forms: IGx_Iy or Modulez_IGx_Iy"
+                    )
+
                 for valtype in valtypes:
                     if attribute == "Momentary":
                         paths[f"{uid}/{measurement}/{valtype}/Momentary"] = (
@@ -131,8 +150,8 @@ async def read_and_store(name, node, publishing_handler):
     publishing_handler.values[name] = value
 
 
-async def read_measurements(device, opcua_ids, mode: Mode):
-    """Create browse paths, onnect to the device and read the measurements at
+async def read_measurements(device, opcua_objs, mode: Mode):
+    """Create browse paths, connect to the device and read the measurements at
     given sample rate.
 
     Arguments:
@@ -145,7 +164,7 @@ async def read_measurements(device, opcua_ids, mode: Mode):
     url = f"opc.tcp://{uri}:{port}"
     log_msg(f"Connecting to {url} ...")
 
-    browse_paths = construct_browse_paths(uid, opcua_ids)
+    browse_paths = construct_browse_paths(uid, opcua_objs)
     values = dict.fromkeys(browse_paths.keys())
 
     log_msg(f"Browse paths: {browse_paths}")
