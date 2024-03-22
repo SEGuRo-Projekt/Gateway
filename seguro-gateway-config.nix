@@ -1,3 +1,4 @@
+
 # SPDX-FileCopyrightText: 2024 OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
 {
@@ -35,7 +36,7 @@ with lib; let
               map (ch: {
                 name = toLower ch;
                 type = "complex";
-                opcua_id = ch;
+                opcua_obj = ch;
                 opcua_attr = "Momentary";
               })
               mp.channels
