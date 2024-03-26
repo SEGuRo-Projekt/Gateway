@@ -4,7 +4,7 @@
       "format": "protobuf",
       "host": "localhost",
       "out": {
-        "publish": "measurements/loc1/md1/mp1"
+        "publish": "data/measurements/loc1/md1/mp1"
       },
       "port": 1883,
       "type": "mqtt"
@@ -13,7 +13,7 @@
       "format": "protobuf",
       "host": "localhost",
       "out": {
-        "publish": "measurements/loc1/md1/mp2"
+        "publish": "data/measurements/loc1/md1/mp2"
       },
       "port": 1883,
       "type": "mqtt"
@@ -22,7 +22,7 @@
       "format": "protobuf",
       "host": "localhost",
       "out": {
-        "publish": "measurements/loc1/md2/mp1"
+        "publish": "data/measurements/loc1/md2/mp1"
       },
       "port": 1883,
       "type": "mqtt"

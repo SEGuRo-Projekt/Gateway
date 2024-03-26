@@ -17,7 +17,7 @@ with lib; let
       host = config.mqtt.host or "localhost";
       port = config.mqtt.port or 1883;
       out = {
-        publish = "measurements/${config.uid}/${md.uid}/${mp.uid}";
+        publish = "data/measurements/${config.uid}/${md.uid}/${mp.uid}";
       };
     };
   };
