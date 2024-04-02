@@ -1,14 +1,10 @@
 {
-  "uid": "loc1",
-
   "devices": [
     {
       "description": "Measurement device in ACS laboratory - Unterverteilung 1",
       "name": "Janitza UMG 801",
-      "uid": "md1",
       "points": [
         {
-          "uid": "mp1",
           "channels": [
             "U1",
             "U2",
@@ -16,10 +12,10 @@
             "IG1_I1",
             "IG1_I2",
             "IG1_I3"
-          ]
+          ],
+          "uid": "mp1"
         },
         {
-          "uid": "mp2",
           "channels": [
             "U1",
             "U2",
@@ -27,18 +23,18 @@
             "IG1_I4",
             "IG2_I1",
             "IG2_I2"
-          ]
+          ],
+          "uid": "mp2"
         }
       ],
+      "uid": "md1",
       "uri": "janitza-umg-uv1.acs-lab.eonerc.rwth-aachen.de"
     },
     {
       "description": "Measurement device in ACS laboratory - Unterverteilung 2",
       "name": "Janitza UMG 801",
-      "uid": "md2",
       "points": [
         {
-          "uid": "mp1",
           "channels": [
             "U1",
             "U2",
@@ -46,10 +42,13 @@
             "IG1_I1",
             "IG1_I2",
             "IG1_I3"
-          ]
+          ],
+          "uid": "mp1"
         }
       ],
+      "uid": "md2",
       "uri": "janitza-umg-uv2.acs-lab.eonerc.rwth-aachen.de"
     }
-  ]
+  ],
+  "uid": "loc1"
 }
