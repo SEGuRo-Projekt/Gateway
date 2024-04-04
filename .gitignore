@@ -1,7 +1,13 @@
 # SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
 # SPDX-License-Identifier: Apache-2.0
-__pycache__/
 .vscode/launch.json
-result
-*.qcow2
+
+# Python
+/.pre-commit-config.yaml
 *.pyc
+__pycache__/
+
+# Nix
+*result*
+*.qcow2
+/.direnv

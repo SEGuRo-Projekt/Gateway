@@ -34,6 +34,11 @@
       "flush": true,
       "format": "villas.human",
       "in": {
+        "hooks": [
+          {
+            "type": "stats"
+          }
+        ],
         "signals": [
           {
             "name": "u1",
@@ -106,6 +111,11 @@
       "flush": true,
       "format": "villas.human",
       "in": {
+        "hooks": [
+          {
+            "type": "stats"
+          }
+        ],
         "signals": [
           {
             "name": "u1",
@@ -156,6 +166,19 @@
   },
   "paths": [
     {
+      "hooks": [
+        {
+          "interval": 10,
+          "trigger": "timestamp",
+          "type": "frame",
+          "unit": "seconds"
+        },
+        {
+          "algorithm": "sha256",
+          "type": "digest",
+          "uri": "/run/villas-digests.fifo"
+        }
+      ],
       "in": [
         "opcua_md1.u1",
         "opcua_md1.u2",
@@ -167,6 +190,19 @@
       "out": "mqtt_md1_mp1"
     },
     {
+      "hooks": [
+        {
+          "interval": 10,
+          "trigger": "timestamp",
+          "type": "frame",
+          "unit": "seconds"
+        },
+        {
+          "algorithm": "sha256",
+          "type": "digest",
+          "uri": "/run/villas-digests.fifo"
+        }
+      ],
       "in": [
         "opcua_md1.u1",
         "opcua_md1.u2",
@@ -178,6 +214,19 @@
       "out": "mqtt_md1_mp2"
     },
     {
+      "hooks": [
+        {
+          "interval": 10,
+          "trigger": "timestamp",
+          "type": "frame",
+          "unit": "seconds"
+        },
+        {
+          "algorithm": "sha256",
+          "type": "digest",
+          "uri": "/run/villas-digests.fifo"
+        }
+      ],
       "in": [
         "opcua_md2.u1",
         "opcua_md2.u2",
@@ -188,5 +237,6 @@
       ],
       "out": "mqtt_md2_mp1"
     }
-  ]
+  ],
+  "stats": 1.0
 }

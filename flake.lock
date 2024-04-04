@@ -53,56 +53,39 @@
         "type": "github"
       }
     },
-    "lib60870": {
-      "flake": false,
+    "flake-utils_3": {
+      "inputs": {
+        "systems": "systems_4"
+      },
       "locked": {
-        "lastModified": 1672404819,
-        "narHash": "sha256-9o+gWQbpCJb+UZzPNmzGqpWD0QbGjg41is/f1POUEQs=",
-        "owner": "mz-automation",
-        "repo": "lib60870",
-        "rev": "53a6b3c1cf3023e51cf81763b1ccf048edcd1c64",
+        "lastModified": 1705309234,
+        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
         "type": "github"
       },
       "original": {
-        "owner": "mz-automation",
-        "ref": "v2.3.2",
-        "repo": "lib60870",
+        "owner": "numtide",
+        "repo": "flake-utils",
         "type": "github"
       }
     },
-    "libdatachannel": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1683797946,
-        "narHash": "sha256-kSK+5gFMG6tq89R1m08gNBKPdwyR/mLEDhWXQ/uk34o=",
-        "ref": "refs/tags/v0.18.4",
-        "rev": "7a5e01071ae635e06f175233abd11d623f09cbb8",
-        "revCount": 2459,
-        "submodules": true,
-        "type": "git",
-        "url": "https://github.com/paullouisageneau/libdatachannel.git"
+    "flake-utils_4": {
+      "inputs": {
+        "systems": "systems_5"
       },
-      "original": {
-        "ref": "refs/tags/v0.18.4",
-        "submodules": true,
-        "type": "git",
-        "url": "https://github.com/paullouisageneau/libdatachannel.git"
-      }
-    },
-    "libiec61850": {
-      "flake": false,
       "locked": {
-        "lastModified": 1647022552,
-        "narHash": "sha256-1vT0ry6IJqilpM7g9l7fx+ET+Dyo24WAyWqTyPM9nQw=",
-        "owner": "mz-automation",
-        "repo": "libiec61850",
-        "rev": "210cf30897631fe2006ac50483caf8fd616622a2",
+        "lastModified": 1705309234,
+        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
         "type": "github"
       },
       "original": {
-        "owner": "mz-automation",
-        "ref": "v1.5.1",
-        "repo": "libiec61850",
+        "owner": "numtide",
+        "repo": "flake-utils",
         "type": "github"
       }
     },
@@ -127,34 +110,60 @@
         "type": "github"
       }
     },
-    "nixpkgs": {
+    "nix-github-actions_2": {
+      "inputs": {
+        "nixpkgs": [
+          "seguro-platform",
+          "poetry2nix",
+          "nixpkgs"
+        ]
+      },
       "locked": {
-        "lastModified": 1709677081,
-        "narHash": "sha256-tix36Y7u0rkn6mTm0lA45b45oab2cFLqAzDbJxeXS+c=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "880992dcc006a5e00dd0591446fdf723e6a51a64",
+        "lastModified": 1703863825,
+        "narHash": "sha256-rXwqjtwiGKJheXB43ybM8NwWB8rO2dSRrEqes0S7F5Y=",
+        "owner": "nix-community",
+        "repo": "nix-github-actions",
+        "rev": "5163432afc817cf8bd1f031418d1869e4c9d5547",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-23.11",
-        "repo": "nixpkgs",
+        "owner": "nix-community",
+        "repo": "nix-github-actions",
         "type": "github"
       }
     },
-    "nixpkgs_2": {
+    "nixos-shell": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
       "locked": {
-        "lastModified": 1709899623,
-        "narHash": "sha256-gZgDebsCZJF6Z0rm6BQVnm8ThIaiSmYukGaV0Iw8YEU=",
+        "lastModified": 1711263551,
+        "narHash": "sha256-lDaSa0yT0uzFXq1rB0DbD5MNi2TmG9DaTrZqZoPP/I4=",
+        "owner": "Mic92",
+        "repo": "nixos-shell",
+        "rev": "b7e8a0c75c99d81039d1ca7eaab227e4814de638",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "nixos-shell",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1711703276,
+        "narHash": "sha256-iMUFArF0WCatKK6RzfUJknjem0H9m4KgorO/p3Dopkk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3030c33c68a0826148335b72fc8bb734ff20c520",
+        "rev": "d8fe5e6c92d0d190646fb9f1056741a229980089",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "release-23.11",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -183,12 +192,62 @@
         "type": "github"
       }
     },
+    "poetry2nix_2": {
+      "inputs": {
+        "flake-utils": "flake-utils_4",
+        "nix-github-actions": "nix-github-actions_2",
+        "nixpkgs": [
+          "seguro-platform",
+          "nixpkgs"
+        ],
+        "systems": "systems_6",
+        "treefmt-nix": "treefmt-nix_2"
+      },
+      "locked": {
+        "lastModified": 1708589824,
+        "narHash": "sha256-2GOiFTkvs5MtVF65sC78KNVxQSmsxtk0WmV1wJ9V2ck=",
+        "owner": "nix-community",
+        "repo": "poetry2nix",
+        "rev": "3c92540611f42d3fb2d0d084a6c694cd6544b609",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "poetry2nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "nixos-shell": "nixos-shell",
         "nixpkgs": "nixpkgs",
         "poetry2nix": "poetry2nix",
+        "seguro-platform": "seguro-platform",
         "villas-node": "villas-node"
+      }
+    },
+    "seguro-platform": {
+      "inputs": {
+        "flake-utils": "flake-utils_3",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "poetry2nix": "poetry2nix_2"
+      },
+      "locked": {
+        "lastModified": 1712064301,
+        "narHash": "sha256-FqHxp6rMrEMvCk5eESdNB4Zp7Iby10pfu5T+uSEqP7E=",
+        "owner": "SEGuRo-Projekt",
+        "repo": "Platform",
+        "rev": "78cd8ffb2352453865ab00bca85d4bb6a31502c7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SEGuRo-Projekt",
+        "ref": "dev",
+        "repo": "Platform",
+        "type": "github"
       }
     },
     "systems": {
@@ -235,6 +294,50 @@
         "type": "indirect"
       }
     },
+    "systems_4": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_5": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_6": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "id": "systems",
+        "type": "indirect"
+      }
+    },
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": [
@@ -256,25 +359,45 @@
         "type": "github"
       }
     },
+    "treefmt-nix_2": {
+      "inputs": {
+        "nixpkgs": [
+          "seguro-platform",
+          "poetry2nix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1708335038,
+        "narHash": "sha256-ETLZNFBVCabo7lJrpjD6cAbnE11eDOjaQnznmg/6hAE=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "e504621290a1fd896631ddbc5e9c16f4366c9f65",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
     "villas-node": {
       "inputs": {
         "ethercat": "ethercat",
-        "lib60870": "lib60870",
-        "libdatachannel": "libdatachannel",
-        "libiec61850": "libiec61850",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
-        "lastModified": 1709924228,
-        "narHash": "sha256-xm9nnLqXxmR2eZZOLMCyBX1kq8UNL6TmnB27nYFSvxw=",
+        "lastModified": 1711626147,
+        "narHash": "sha256-4gZls8Z1AKrWCO6RD3oiBij2FJzYRiuwW5TP515a+nY=",
         "owner": "VILLASframework",
         "repo": "node",
-        "rev": "c42f25c5191be062eb02c6abdfa11b82506754bd",
+        "rev": "bcb83e2733ed7b042fd87f9cfdcde37b1b14226d",
         "type": "github"
       },
       "original": {
         "owner": "VILLASframework",
-        "ref": "nixos-module-config-path",
         "repo": "node",
         "type": "github"
       }

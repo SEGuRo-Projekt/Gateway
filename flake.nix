@@ -1,16 +1,31 @@
-# SPDX-FileCopyrightText: 2024 OPAL-RT Germany GmbH
+# SPDX-FileCopyrightText: 2024 Steffen Vogel, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
 {
   description = "The measurement device gateway for SEGuRo";
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    nixos-shell = {
+      url = "github:Mic92/nixos-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     poetry2nix = {
       url = "github:nix-community/poetry2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    villas-node.url = "github:VILLASframework/node/nixos-module-config-path";
+
+    villas-node = {
+      url = "github:VILLASframework/node";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    seguro-platform = {
+      url = "github:SEGuRo-Projekt/Platform/dev";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -20,11 +35,19 @@
     poetry2nix,
     villas-node,
     ...
-  } @ inputs:
+  } @ inputs: let
+    inherit (builtins) readDir;
+    inherit (nixpkgs.lib) mapAttrs;
+
+    dirEntries = path: let
+      toPath = n: v: path + "/${n}";
+    in
+      mapAttrs toPath (readDir path);
+    forDirEntries = path: f: mapAttrs f (dirEntries path);
+  in
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       p2n = poetry2nix.lib.mkPoetry2Nix {inherit pkgs;};
-      inherit (p2n) mkPoetryApplication mkPoetryEnv;
     in rec {
       packages = {
         # A simple shell script which transforms one JSON file into another using
@@ -64,7 +87,7 @@
         # The SEGuRo Gateway JSON configuration file is read from stdin.
         # The VILLASnode JSON configuration file is written to stdout.
         villas-generate-gateway-config = let
-          seguroGatewayConfigTemplate = ./seguro-gateway-config.nix;
+          seguroGatewayConfigTemplate = ./nix/seguro-gateway-config.nix;
         in
           pkgs.writeShellApplication {
             name = "villas-generate-gateway-config";
@@ -78,160 +101,74 @@
         # A Python / Poetry application used for getting data from
         # Janitza UMG measurement devices via OPC-UA.
         # This application is used by VILLASnode exec-node type.
-        seguro-gateway = mkPoetryApplication {
-          projectDir = self;
-          preferWheels = true;
+        seguro-gateway = p2n.mkPoetryApplication {
+          projectDir = ./.;
         };
       };
 
       # A development shell to be used with `nix develop`
       devShells.default = pkgs.mkShell {
         buildInputs = [
-          (mkPoetryEnv {
+          (p2n.mkPoetryEnv {
             projectDir = ./.;
             editablePackageSources = {
               seguro = ./seguro;
             };
-            preferWheels = true;
           })
         ];
 
-        packages =
-          (with pkgs; [
-            poetry
-            reuse
-            pre-commit
-          ])
-          ++ (with self.packages.${system}; [
-            nix-render-template
-            villas-generate-gateway-config
-          ])
-          ++ [
-            (pkgs.writeShellApplication
-              {
-                name = "start-vm";
-                text = ''
-                  set -e
+        packages = let
+          start-vm = pkgs.writeShellApplication {
+            name = "start-vm";
+            runtimeInputs = [inputs.nixos-shell.packages.${pkgs.system}.nixos-shell pkgs.swtpm];
+            text = ''
+              TPMSTATE=$(mktemp -d -t swtpm_XXXX)
+              echo "TPM state is at: $TPMSTATE"
 
-                  # Enter repo root
-                  pushd "''$(git rev-parse --show-toplevel)"
+              # shellcheck disable=SC2064
+              trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-                  # Use serial console
-                  export QEMU_KERNEL_PARAMS=console=ttyS0
+              swtpm socket \
+                --tpm2 \
+                --tpmstate "dir=$TPMSTATE" \
+                --ctrl "type=unixio,path=$TPMSTATE/swtpm-sock" &
 
-                  # Rebuild VM
-                  nixos-rebuild --flake .\#default build-vm
-
-                  # Run VM
-                  ./result/bin/run-nixos-vm -nographic
-
-                  # Reset Terminal
-                  reset
-                '';
-              })
-          ];
+              QEMU_OPTS="-chardev socket,id=chrtpm,path=$TPMSTATE/swtpm-sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0" \
+              nixos-shell --flake .\#vm
+            '';
+          };
+        in (with pkgs // self.packages.${system}; [
+          poetry
+          reuse
+          pre-commit
+          nix-render-template
+          villas-generate-gateway-config
+          start-vm
+        ]);
       };
     })
     // {
-      nixosModules = rec {
-        default = gateway;
+      nixosModules = let
+        dir = ./nix/nixosModules;
+        mkNixosModule = name: path: import path;
+      in
+        forDirEntries dir mkNixosModule;
 
-        # A NixOS module which configures VILLASnode
-        # for the SEGuRo Gateways:
-        #  - Starts VILLASnode at boot
-        #  - Copies default Gateway JSON configuration to /boot
-        #  - Generates VILLASnode config via villas-generate-gateway-config during start of VILLASnode
-        #  - Makes sure readout_umg and villas-generate-gateway-config are in the system PATH
-        gateway = {
-          inputs,
-          lib,
-          pkgs,
-          config,
-          ...
-        }: let
-          mypkgs = self.packages.${pkgs.system};
-
-          gatewayConfigPath = "/boot/gateway.json";
-          villasConfigPath = "/boot/villas-node.json";
-
-          defaultGatewayConfig = ./config/opc-ua.json;
-
-          generateVillasConfigScript = pkgs.writeShellApplication {
-            name = "villas-generate-config";
-            runtimeInputs = [
-              mypkgs.villas-generate-gateway-config
-            ];
-            text = ''
-              villas-generate-gateway-config < ${gatewayConfigPath} > ${villasConfigPath}
-            '';
-          };
-        in {
-          imports = [
-            inputs.villas-node.nixosModules.default
-          ];
-
-          environment.systemPackages = [
-            mypkgs.seguro-gateway
-            mypkgs.villas-generate-gateway-config
-          ];
-
-          services.villas.node = {
-            enable = true;
-            configPath = villasConfigPath;
-          };
-
-          # Extend villas-node SystemD service to generate VILLASnode config
-          # in ExecPreStart
-          systemd.services.villas-node = {
-            path = [
-              mypkgs.seguro-gateway
-            ];
-            serviceConfig = {
-              ConditionPathExists = config.services.villas.node.configPath;
-              ExecStartPre = "${generateVillasConfigScript}/bin/villas-generate-config";
-            };
-          };
-
-          # Copy default Gateway JSON configuration to /boot if it does not exist yet
-          system.activationScripts.copyDefaultGatewayConfig = ''
-            if ! [ -f ${gatewayConfigPath} ]; then
-              cp ${defaultGatewayConfig} ${gatewayConfigPath}
-            fi
-          '';
+      nixosConfigurations = let
+        dir = ./nix/nixosConfigurations;
+        parse = hostname: {
+          system,
+          modules,
+        }: {
+          inherit system modules;
+          specialArgs = inputs // {inherit hostname;};
         };
-      };
+        mkNixosConfiguration = name: path:
+          nixpkgs.lib.nixosSystem
+          (parse name (import path));
+      in
+        forDirEntries dir mkNixosConfiguration;
 
-      # A simple NixOS configuration for testing the gateway in a VM
-      #
-      # Start via
-      nixosConfigurations = {
-        default = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ({self, ...}: {
-              imports = [
-                self.nixosModules.gateway
-              ];
-
-              boot.loader = {
-                systemd-boot.enable = true;
-                efi.canTouchEfiVariables = true;
-              };
-
-              users.users.villas = {
-                isNormalUser = true;
-                extraGroups = ["wheel"];
-                initialPassword = "villas";
-              };
-
-              system.stateVersion = "23.11";
-            })
-          ];
-          specialArgs = {
-            inherit self;
-            inherit inputs;
-          };
-        };
-      };
+      secrets = dirEntries ./nix/secrets;
     };
 }

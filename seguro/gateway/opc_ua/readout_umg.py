@@ -3,7 +3,7 @@
 import asyncio
 import os
 
-from seguro.gateway.config_parser import (
+from seguro.gateway.opc_ua.config_parser import (
     read_config,
     parse_opcua_objects,
     validate_config,
