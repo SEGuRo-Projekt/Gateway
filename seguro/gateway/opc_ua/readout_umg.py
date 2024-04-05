@@ -8,8 +8,8 @@ from seguro.gateway.opc_ua.config_parser import (
     parse_opcua_objects,
     validate_config,
 )
-from seguro.gateway.logger import log_msg
-from seguro.gateway.subscription_handler import Mode, read_measurements
+from seguro.gateway.opc_ua.logger import log_msg
+from seguro.gateway.opc_ua.subscription_handler import Mode, read_measurements
 
 
 def main():
