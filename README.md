@@ -30,9 +30,9 @@ Inside the development shell you can directly work on the Python code or use the
 - Generate VILLASndoe config from Gateway config: `villas-generate-gateway-config < gateway.json > villas-node.json`
 - Start a full-fledged VM to test the configuration of VILLASnode `start-vm`
 
-### Virtual Machine
+### Virtual machine
 
-Login credentials are: `villas` / `villas`
+Start the VM by running: `start-vm`.
 
 Then check the VILLASnode service and its config:
 
@@ -45,19 +45,30 @@ cat /boot/villas-config.json
 
 You can exit the VM console by `Ctrl+A + X`.
 
+### Build Raspberry Pi SD-card image
+
+Build a SD-card image by running:
+
+```shell
+nix build .#nixosConfigurations.rpi-1.config.system.build.sdImage
+```
+
+This will place the generated SD-card image under `./result/`.
+
+You can use `dd` to copy this image to a real SD-card:
+
+```shell
+dd if=./result/ of=/dev/sdX bs=4k
+```
+
 ## Development
 
 ```shell
 pip install -e .
 ```
 
-### Nix
-
-```shell
-nix develop
-```
-
 ## License
 
-- SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen  University\
+- SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen  University
+- SPDX-FileCopyrightText: 2024 Steffen Vogel, OPAL-RT Germany GmbH
 - SPDX-License-Identifier: Apache-2.0
