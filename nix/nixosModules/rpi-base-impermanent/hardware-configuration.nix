@@ -11,7 +11,10 @@
     "/" = {
       device = "none";
       fsType = "tmpfs";
-      options = ["size=2G" "mode=755"];
+      options = [
+        "size=2G"
+        "mode=755"
+      ];
     };
 
     # Mount the firmware partition into /boot
@@ -29,24 +32,23 @@
 
     # Mount /nix from persistent storage
     "/nix" = {
-      depends = ["/persistent"];
+      depends = [ "/persistent" ];
       device = "/persistent/nix";
       fsType = "none";
-      options = ["bind"];
+      options = [ "bind" ];
     };
 
     # Mount /boot from persistent storage
     "/boot" = {
-      depends = ["/persistent"];
+      depends = [ "/persistent" ];
       device = "/persistent/boot";
       fsType = "none";
-      options = ["bind"];
+      options = [ "bind" ];
     };
   };
 
   security.tpm2 = {
     enable = true;
-    pkcs11.enable = true;
     tctiEnvironment.enable = true;
   };
 

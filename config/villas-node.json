@@ -29,7 +29,7 @@
     },
     "opcua_md1": {
       "exec": [
-        "readout_umg"
+        "opcua-readout"
       ],
       "flush": true,
       "format": "villas.human",
@@ -106,7 +106,7 @@
     },
     "opcua_md2": {
       "exec": [
-        "readout_umg"
+        "opcua-readout"
       ],
       "flush": true,
       "format": "villas.human",

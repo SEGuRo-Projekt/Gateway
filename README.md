@@ -25,7 +25,7 @@ direnv allow
 
 Inside the development shell you can directly work on the Python code or use the following commands:
 
-- Run Python gateway code: `readout_umg`
+- Run Python gateway code: `opcua-readout`
 - Render Nix template expression: `nix-render-template template.nix < input.json > output.json`
 - Generate VILLASndoe config from Gateway config: `villas-generate-gateway-config < gateway.json > villas-node.json`
 - Start a full-fledged VM to test the configuration of VILLASnode `start-vm`
@@ -53,12 +53,18 @@ Build a SD-card image by running:
 nix build .#nixosConfigurations.rpi-1.config.system.build.sdImage
 ```
 
-This will place the generated SD-card image under `./result/`.
+or short
+
+```shell
+nix build .
+```
+
+This will place the generated SD-card image under `./result/sd-image/`.
 
 You can use `dd` to copy this image to a real SD-card:
 
 ```shell
-dd if=./result/ of=/dev/sdX bs=4k
+zstd -d ./result/sd-image/*.img.zst | dd of=/dev/sdX bs=4k
 ```
 
 ## Development

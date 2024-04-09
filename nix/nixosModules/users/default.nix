@@ -4,7 +4,7 @@
   users.users = rec {
     stv0g = {
       isNormalUser = true;
-      extraGroups = ["wheel"];
+      extraGroups = [ "wheel" ];
       uid = 2001;
 
       openssh.authorizedKeys.keys = [
@@ -16,5 +16,8 @@
     root.openssh.authorizedKeys.keys = stv0g.openssh.authorizedKeys.keys;
   };
 
-  nix.settings.trusted-users = ["root" "stv0g"];
+  nix.settings.trusted-users = [
+    "root"
+    "stv0g"
+  ];
 }

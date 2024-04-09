@@ -5,21 +5,25 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) getExe;
-in {
-  imports = [agenix.nixosModules.default];
+in
+{
+  imports = [ agenix.nixosModules.default ];
 
   age = {
-    ageBin = with pkgs;
+    ageBin =
+      with pkgs;
       getExe (writeShellApplication {
         name = "rage-with-plugins";
-        runtimeInputs = [rage age-plugin-tpm];
+        runtimeInputs = [
+          rage
+          age-plugin-tpm
+        ];
         text = ''exec rage "$@"'';
       });
 
-    identityPaths = [
-      "/var/lib/keys/seguro.key"
-    ];
+    identityPaths = [ "/var/lib/keys/seguro.key" ];
   };
 }
