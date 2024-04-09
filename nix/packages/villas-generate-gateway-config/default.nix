@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2024 Steffen Vogel, OPAL-RT Germany GmbH
+# SPDX-License-Identifier: Apache-2.0
+#
 # A simple shell script which uses nix-render-template
 # to transform a SEGuRo Gateway JSON configuration file into
 # a VILLASnode JSON configuration file.

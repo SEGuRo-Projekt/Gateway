@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2024 Steffen Vogel, OPAL-RT Germany GmbH
+# SPDX-License-Identifier: Apache-2.0
 {writeShellApplication, swtpm, system, inputs, ...}: let
   nixos-shell = inputs.nixos-shell.packages.${system}.nixos-shell;
 in writeShellApplication {

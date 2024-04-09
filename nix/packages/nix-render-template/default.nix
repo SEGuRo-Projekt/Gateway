@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2024 Steffen Vogel, OPAL-RT Germany GmbH
+# SPDX-License-Identifier: Apache-2.0
+#
 # A simple shell script which transforms one JSON file into another using
 # a Nix function.
 #
