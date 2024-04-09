@@ -67,30 +67,7 @@
         };
       in
       {
-        # A development shell to be used with `nix develop`
-        devShells.default = pkgs.mkShell {
-          buildInputs = [
-            (pkgs.poetry2nix.mkPoetryEnv {
-              projectDir = ./.;
-              editablePackageSources = {
-                seguro = ./seguro;
-              };
-              overrides = pkgs.poetry2nix.defaultPoetryOverrides.extend (
-                self: super: { cryptography = pkgs.python311Packages.cryptography; }
-              );
-            })
-          ];
-
-          packages = with pkgs; [
-            poetry
-            reuse
-            pre-commit
-
-            nix-render-template
-            villas-generate-gateway-config
-            start-vm
-          ];
-        };
+        devShells.default = pkgs.callPackage ./nix/shell.nix { };
       }
     )
     // {
