@@ -14,7 +14,7 @@
   '';
 
   nixpkgs = {
-    buildPlatform = lib.systems.examples.aarch64-multiplatform;
+    buildPlatform = "x86_64-linux";
   };
 
   system.stateVersion = "23.11";

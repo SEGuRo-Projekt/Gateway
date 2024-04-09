@@ -9,20 +9,18 @@
 {
   pkgs,
   self,
+  config,
   ...
 } @ inputs: let
   platform = inputs.seguro-platform.packages.${pkgs.system}.seguro-platform;
-  villas-node = inputs.villas-node.packages.${pkgs.system}.villas;
-
-  myPkgs = self.packages.${pkgs.system};
 
   gatewayConfigPath = "/boot/gateway.json";
   villasConfigPath = "/boot/villas-node.json";
 
   generateVillasConfigScript = pkgs.writeShellApplication {
     name = "villas-generate-config";
-    runtimeInputs = [
-      myPkgs.villas-generate-gateway-config
+    runtimeInputs = with pkgs; [
+      villas-generate-gateway-config
     ];
     text = ''
       villas-generate-gateway-config < ${gatewayConfigPath} > ${villasConfigPath}
@@ -33,17 +31,28 @@ in {
     inputs.villas-node.nixosModules.default
   ];
 
-  environment.systemPackages = with pkgs // myPkgs; [
+  nixpkgs.overlays = [
+    inputs.villas-node.overlays.default
+    # TODO: Cross-build of hiredis is broken
+    (final: prev: {
+      villas = prev.villas.override {
+        withNodeRedis = false;
+      };
+    })
+  ];
+
+  environment.systemPackages = with pkgs; [
     platform
-    villas-node
+    villas
     mosquitto
     tpm2-tools
     villas-generate-gateway-config
   ];
 
   services.villas.node = {
-    enable = true;
+    enable = false;
     configPath = villasConfigPath;
+    package = pkgs.villas;
   };
 
   systemd = {
@@ -51,8 +60,8 @@ in {
       # Extend villas-node SystemD service to generate VILLASnode config
       # in ExecPreStart
       villas-node = {
-        path = [
-          myPkgs.seguro-gateway
+        path = with pkgs; [
+          seguro-gateway
         ];
         serviceConfig = {
           Restart = "on-failure";

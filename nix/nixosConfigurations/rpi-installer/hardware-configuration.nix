@@ -35,7 +35,7 @@
     };
   };
 
-  console.enable = false;
+  console.enable = true;
 
   environment.systemPackages = with pkgs; [
     libraspberrypi
