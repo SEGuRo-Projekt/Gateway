@@ -30,7 +30,8 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-readout_umg = "seguro.gateway.opc_ua.readout_umg:main"
+opcua-readout = "seguro.gateway.opc_ua.readout:main"
+opcua-mockup = "seguro.gateway.opc_ua.mockup:main"
 
 [tool.black]
 line-length = 79

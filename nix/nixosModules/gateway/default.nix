@@ -5,7 +5,7 @@
 #  - Starts VILLASnode at boot
 #  - Copies default Gateway JSON configuration to /boot
 #  - Generates VILLASnode config via villas-generate-gateway-config during start of VILLASnode
-#  - Makes sure readout_umg and villas-generate-gateway-config are in the system PATH
+#  - Makes sure opcua-readout and villas-generate-gateway-config are in the system PATH
 {
   pkgs,
   self,

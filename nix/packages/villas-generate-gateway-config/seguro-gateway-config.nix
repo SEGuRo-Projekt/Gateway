@@ -73,7 +73,7 @@ with builtins // lib; let
           type = "exec";
           format = "villas.human";
           flush = true;
-          exec = ["readout_umg"];
+          exec = ["opcua-readout"];
 
           opcua_config = {
             inherit (md) uid;
