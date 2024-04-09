@@ -75,10 +75,9 @@
               editablePackageSources = {
                 seguro = ./seguro;
               };
-              overrides = pkgs.poetry2nix.defaultPoetryOverrides.extend
-                (self: super: {
-                  cryptography = pkgs.python311Packages.cryptography;
-                });
+              overrides = pkgs.poetry2nix.defaultPoetryOverrides.extend (
+                self: super: { cryptography = pkgs.python311Packages.cryptography; }
+              );
             })
           ];
 

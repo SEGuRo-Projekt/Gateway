@@ -7,7 +7,14 @@
 # The input JSON file is read from stdin.
 # The output JSON file is written to stdout.
 # The file containing the Nix function is passed as the first argument.
-{ writeShellApplication,  nix, jq, inputs, ... }: writeShellApplication {
+{
+  writeShellApplication,
+  nix,
+  jq,
+  inputs,
+  ...
+}:
+writeShellApplication {
   name = "nix-render-template";
   runtimeInputs = [
     nix

@@ -2,7 +2,5 @@
 # SPDX-License-Identifier: Apache-2.0
 {
   system = "aarch64-linux";
-  modules = [
-    ./configuration.nix
-  ];
+  modules = [ ./configuration.nix ];
 }

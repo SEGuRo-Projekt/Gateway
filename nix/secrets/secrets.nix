@@ -18,7 +18,8 @@ let
 
   allUserKeys = concatLists (attrValues userKeys);
   allSystemKeys = attrValues systemKey;
-in {
+in
+{
   "password-svogel.age".publicKeys = allSystemKeys ++ userKeys.svogel;
   "s3-nixcache.age".publicKeys = allSystemKeys ++ allUserKeys;
 }

@@ -5,13 +5,15 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (lib) escapeShellArg getExe;
   nix = getExe config.nix.package;
   nixos-rebuild = getExe pkgs.nixos-rebuild;
   cfg = config.seguro.auto-update;
   host = config.networking.hostName;
-in {
+in
+{
   options.seguro.auto-update = with lib; {
     enable = mkEnableOption "SEGuRo auto-update";
 
@@ -38,7 +40,7 @@ in {
   config = lib.mkIf cfg.enable {
     systemd = {
       timers.seguro-auto-update = {
-        wantedBy = ["timers.target"];
+        wantedBy = [ "timers.target" ];
         timerConfig = {
           OnCalendar = cfg.dates;
           Unit = "seguro-auto-update.service";
@@ -48,18 +50,14 @@ in {
       services.seguro-auto-update = {
         script = ''
           current="$(readlink /run/current-system)"
-          remote="$(${nix} eval --raw --refresh ${
-            escapeShellArg ''${cfg.flake}#nixosConfigurations."${host}".config.system.build.toplevel''
-          })"
+          remote="$(${nix} eval --raw --refresh ${escapeShellArg ''${cfg.flake}#nixosConfigurations."${host}".config.system.build.toplevel''})"
 
           if [ "$current" != "$remote" ]; then
             echo "The remote nixos configuration for this machine has changed"
             echo "current: $current"
             echo "remote:  $remote"
 
-            ${nixos-rebuild} boot --flake ${
-            escapeShellArg "${cfg.flake}#${host}"
-          }
+            ${nixos-rebuild} boot --flake ${escapeShellArg "${cfg.flake}#${host}"}
 
             systemctl reboot
           fi

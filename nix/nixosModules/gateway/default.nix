@@ -11,7 +11,8 @@
   self,
   config,
   ...
-} @ inputs: let
+}@inputs:
+let
   platform = inputs.seguro-platform.packages.${pkgs.system}.seguro-platform;
 
   gatewayConfigPath = "/boot/gateway.json";
@@ -19,26 +20,19 @@
 
   generateVillasConfigScript = pkgs.writeShellApplication {
     name = "villas-generate-config";
-    runtimeInputs = with pkgs; [
-      villas-generate-gateway-config
-    ];
+    runtimeInputs = with pkgs; [ villas-generate-gateway-config ];
     text = ''
       villas-generate-gateway-config < ${gatewayConfigPath} > ${villasConfigPath}
     '';
   };
-in {
-  imports = [
-    inputs.villas-node.nixosModules.default
-  ];
+in
+{
+  imports = [ inputs.villas-node.nixosModules.default ];
 
   nixpkgs.overlays = [
     inputs.villas-node.overlays.default
     # TODO: Cross-build of hiredis is broken
-    (final: prev: {
-      villas = prev.villas.override {
-        withNodeRedis = false;
-      };
-    })
+    (final: prev: { villas = prev.villas.override { withNodeRedis = false; }; })
   ];
 
   environment.systemPackages = with pkgs; [
@@ -60,9 +54,7 @@ in {
       # Extend villas-node SystemD service to generate VILLASnode config
       # in ExecPreStart
       villas-node = {
-        path = with pkgs; [
-          seguro-gateway
-        ];
+        path = with pkgs; [ seguro-gateway ];
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = 3;
@@ -109,7 +101,10 @@ in {
 
   nix = {
     settings = {
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
     };
     gc.automatic = true;
   };

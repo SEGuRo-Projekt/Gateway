@@ -5,7 +5,8 @@
   config, # Input config
   ...
 }:
-with builtins // lib; let
+with builtins // lib;
+let
   # Optional environment variables
   env = lib.filterAttrs (n: v: v != "") {
     demoData = getEnv "DEMO_DATA"; # Generate random test data instead of communicating with real OPC-UA device
@@ -39,111 +40,88 @@ with builtins // lib; let
 
   opcuaNode = md: {
     name = "opcua_${md.uid}";
-    value = let
-      perChannel = ch: (
-        if demoData
-        then {
-          name = toLower ch;
-          signal = "random";
-          amplitude = 1.0;
-        }
-        else {
-          name = toLower ch;
-          type = "complex";
-          opcua_obj = ch;
-          opcua_attr = "Momentary";
-        }
-      );
+    value =
+      let
+        perChannel =
+          ch:
+          (
+            if demoData then
+              {
+                name = toLower ch;
+                signal = "random";
+                amplitude = 1.0;
+              }
+            else
+              {
+                name = toLower ch;
+                type = "complex";
+                opcua_obj = ch;
+                opcua_attr = "Momentary";
+              }
+          );
 
-      signals = unique (concatMap (
-          mp: (
-            map perChannel mp.channels
-          )
-        )
-        md.points);
+        signals = unique (concatMap (mp: (map perChannel mp.channels)) md.points);
 
-      node =
-        if demoData
-        then {
-          type = "signal.v2";
-          rate = 10;
-          realtime = true;
-        }
-        else {
-          type = "exec";
-          format = "villas.human";
-          flush = true;
-          exec = ["opcua-readout"];
+        node =
+          if demoData then
+            {
+              type = "signal.v2";
+              rate = 10;
+              realtime = true;
+            }
+          else
+            {
+              type = "exec";
+              format = "villas.human";
+              flush = true;
+              exec = [ "opcua-readout" ];
 
-          opcua_config = {
-            inherit (md) uid;
-            inherit (md) uri;
-            port = md.port or 4840;
-            sending_rate = md.sending_rate or 100;
-          };
-        };
-    in
+              opcua_config = {
+                inherit (md) uid;
+                inherit (md) uri;
+                port = md.port or 4840;
+                sending_rate = md.sending_rate or 100;
+              };
+            };
+      in
       node
       // {
         "in" = {
           inherit signals;
 
-          hooks = [
-            {
-              type = "stats";
-            }
-          ];
+          hooks = [ { type = "stats"; } ];
         };
       };
   };
 
-  opcuaNodes = listToAttrs (
-    map opcuaNode config.devices
-  );
+  opcuaNodes = listToAttrs (map opcuaNode config.devices);
 
-  mqttNodes = listToAttrs (
-    concatMap (
-      md: (
-        map (mp: mqttNode md mp)
-        md.points
-      )
-    )
-    config.devices
-  );
-in {
+  mqttNodes = listToAttrs (concatMap (md: (map (mp: mqttNode md mp) md.points)) config.devices);
+in
+{
   stats = 1.0;
 
   nodes = mqttNodes // opcuaNodes;
 
-  paths =
-    concatMap (
-      md: (
-        map (mp: {
-          "in" = map (ch: "opcua_${md.uid}.${toLower ch}") mp.channels;
-          "out" = "mqtt_${md.uid}_${mp.uid}";
+  paths = concatMap (
+    md:
+    (map (mp: {
+      "in" = map (ch: "opcua_${md.uid}.${toLower ch}") mp.channels;
+      "out" = "mqtt_${md.uid}_${mp.uid}";
 
-          hooks =
-            [
-              {
-                type = "frame";
-                trigger = "timestamp";
-                interval = 10;
-                unit = "seconds";
-              }
-              {
-                type = "digest";
-                uri = "${digestsURI}";
-                algorithm = "sha256";
-              }
-            ]
-            ++ lib.optionals debug [
-              {
-                type = "print";
-              }
-            ];
-        })
-        md.points
-      )
-    )
-    config.devices;
+      hooks = [
+        {
+          type = "frame";
+          trigger = "timestamp";
+          interval = 10;
+          unit = "seconds";
+        }
+        {
+          type = "digest";
+          uri = "${digestsURI}";
+          algorithm = "sha256";
+        }
+      ] ++ lib.optionals debug [ { type = "print"; } ];
+    }) md.points)
+  ) config.devices;
 }
