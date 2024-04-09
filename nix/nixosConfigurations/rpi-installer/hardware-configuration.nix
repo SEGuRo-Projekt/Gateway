@@ -45,8 +45,6 @@
     raspberrypi-eeprom
   ];
 
-  sdImage.compressImage = false;
-
   networking = {
     firewall.enable = false;
     useDHCP = true;

@@ -67,6 +67,8 @@
         };
       in
       {
+        packages.default = self.nixosConfigurations.rpi-1.config.system.build.sdImage;
+
         devShells.default = pkgs.callPackage ./nix/shell.nix { };
       }
     )
