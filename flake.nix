@@ -23,7 +23,7 @@
     };
 
     seguro-platform = {
-      url = "github:SEGuRo-Projekt/Platform/dev";
+      url = "github:SEGuRo-Projekt/Platform";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
