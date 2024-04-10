@@ -50,23 +50,20 @@
 
       forDirEntries = path: f: mapAttrs f (dirEntries path);
 
-      pkgOverlay =
+      packagesOverlay =
         final: prev: (forDirEntries ./nix/packages (name: path: prev.callPackage path { inherit inputs; }));
-
-      overlays = [
-        pkgOverlay
-        poetry2nix.overlays.default
-      ];
     in
     flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs {
           inherit system;
-          inherit overlays;
+          inherit (self) overlays;
         };
       in
       {
+        # Define the SD-Card image as our default build derivation
+        # This allows us to simply run "nix build" inside our repo to build an image.
         packages.default = self.nixosConfigurations.rpi-1.config.system.build.sdImage;
 
         devShells.default = pkgs.callPackage ./nix/shell.nix { };
@@ -97,6 +94,9 @@
 
       secrets = dirEntries ./nix/secrets;
 
-      inherit overlays;
+      overlays = [
+        packagesOverlay
+        poetry2nix.overlays.default
+      ];
     };
 }

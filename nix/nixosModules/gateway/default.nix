@@ -32,12 +32,23 @@ in
   nixpkgs.overlays = [
     inputs.villas-node.overlays.default
     # TODO: Cross-build of hiredis is broken
-    (final: prev: { villas = prev.villas.override { withNodeRedis = false; }; })
+    (final: prev: { villas-node = prev.villas-node.override { withNodeRedis = false; }; })
+
+    # TODO: Enable EtherCAT on aarch64
+    (final: prev: {
+      ethercat = prev.ethercat.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          meta = previousAttrs.meta or { } // {
+            platforms = prev.lib.platforms.linux;
+          };
+        }
+      );
+    })
   ];
 
   environment.systemPackages = with pkgs; [
     platform
-    villas
+    villas-node
     mosquitto
     tpm2-tools
     villas-generate-gateway-config
