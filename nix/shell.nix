@@ -13,23 +13,27 @@
   villas-generate-gateway-config,
   start-vm,
 }:
+let
+  env = poetry2nix.mkPoetryEnv {
+    projectDir = ../.;
+    editablePackageSources = {
+      seguro = ../seguro;
+    };
+    overrides = poetry2nix.defaultPoetryOverrides.extend (
+      final: prev: { cryptography = python311Packages.cryptography; }
+    );
+  };
+
+  scripts = poetry2nix.mkPoetryScriptsPackage { projectDir = ../.; };
+in
 mkShell {
-  buildInputs = [
-    (poetry2nix.mkPoetryEnv {
-      projectDir = ../.;
-      editablePackageSources = {
-        seguro = ./seguro;
-      };
-      overrides = poetry2nix.defaultPoetryOverrides.extend (
-        self: super: { cryptography = python311Packages.cryptography; }
-      );
-    })
-  ];
+  buildInputs = [ env ];
 
   packages = [
     poetry
     reuse
     pre-commit
+    scripts
 
     nix-render-template
     villas-generate-gateway-config

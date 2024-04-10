@@ -13,7 +13,7 @@
   ...
 }@inputs:
 let
-  platform = inputs.seguro-platform.packages.${pkgs.system}.seguro-platform;
+  seguro-platform = inputs.seguro-platform.packages.${pkgs.system}.seguro-platform;
 
   gatewayConfigPath = "/boot/gateway.json";
   villasConfigPath = "/boot/villas-node.json";
@@ -47,8 +47,8 @@ in
   ];
 
   environment.systemPackages = with pkgs; [
-    platform
     villas-node
+    seguro-platform
     mosquitto
     tpm2-tools
     villas-generate-gateway-config
@@ -65,7 +65,7 @@ in
       # Extend villas-node SystemD service to generate VILLASnode config
       # in ExecPreStart
       villas-node = {
-        path = with pkgs; [ seguro-gateway ];
+        path = [ pkgs.seguro-gateway ];
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = 3;
@@ -81,7 +81,7 @@ in
         description = "Publish the device status periodically via MQTT";
         startAt = "*-*-* *:*:00/10"; # Run every 10-minutes
         serviceConfig = {
-          ExecStart = "${platform}/bin/heartbeat-sender";
+          ExecStart = "${seguro-platform}/bin/heartbeat-sender";
         };
       };
 
@@ -89,9 +89,18 @@ in
         description = "Sign measurement data via TSA and TPM and publish them via MQTT";
         serviceConfig = {
           StandardInput = "socket";
-          ExecStart = "${platform}/bin/signature-sender --fifo /dev/stdin";
+          ExecStart = "${seguro-platform}/bin/signature-sender --fifo /dev/stdin";
         };
       };
+
+      opcua-mockup = {
+        enable = false;
+
+        description = "A mockup of an OPC-UA measurement device";
+        serviceConfig = {
+          ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup"
+        }
+      }
     };
 
     sockets = {

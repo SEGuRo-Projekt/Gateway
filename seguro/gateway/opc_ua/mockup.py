@@ -5,18 +5,18 @@ import asyncio
 import logging
 import random
 import sys
+import argparse
 
 from asyncua import Server
 
 
-async def run_server():
+async def run_server(rate: float, endpoint: str, uri):
     _logger = logging.getLogger(__name__)
     server = Server()
     await server.init()
-    server.set_endpoint("opc.tcp://0.0.0.0:4840/")
+    server.set_endpoint(endpoint)
     server.set_server_name("OPC UA Mockup Measurement Device")
 
-    uri = "https://github.com/SEGuRo-Projekt/Gateway"
     idx = await server.register_namespace(uri)
 
     device = await server.nodes.objects.add_object(idx, "Device")
@@ -114,8 +114,8 @@ async def run_server():
 
     async with server:
         while True:
-            await asyncio.sleep(1)
-            # Update variables with random values within realistic bounadaries
+            await asyncio.sleep(1 / rate)
+            # Update variables with random values within realistic boundaries
             # Freq: 49.9 - 50.1 Hz
             # ULN: 227.0 - 235.0 V
             # IG: 0.0 - 1.15 A
@@ -138,11 +138,24 @@ async def run_server():
 def main() -> int:
     logging.basicConfig(level=logging.DEBUG)
 
-    asyncio.run(run_server())
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--uri",
+        "-u",
+        type=str,
+        default="https://github.com/SEGuRo-Projekt/Gateway",
+    )
+    parser.add_argument("--rate", "-r", type=float, default=1.0)
+    parser.add_argument(
+        "--endpoint", "-e", type=str, default="opc.tcp://0.0.0.0:4840/"
+    )
+
+    args = parser.parse_args()
+
+    asyncio.run(run_server(args.rate, args.endpoint, args.uri))
 
     return 0
 
 
 if __name__ == "__main__":
-
     sys.exit(main())
