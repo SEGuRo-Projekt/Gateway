@@ -17,6 +17,7 @@
     '';
 
   nixpkgs = {
+    hostPlatform = "aarch64-linux";
     buildPlatform = "x86_64-linux";
   };
 
