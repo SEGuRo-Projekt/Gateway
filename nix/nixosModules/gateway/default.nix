@@ -8,8 +8,6 @@
 #  - Makes sure opcua-readout and villas-generate-gateway-config are in the system PATH
 {
   pkgs,
-  self,
-  config,
   ...
 }@inputs:
 let
@@ -98,9 +96,9 @@ in
 
         description = "A mockup of an OPC-UA measurement device";
         serviceConfig = {
-          ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup"
-        }
-      }
+          ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup";
+        };
+      };
     };
 
     sockets = {
