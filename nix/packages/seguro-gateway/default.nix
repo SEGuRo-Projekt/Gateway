@@ -9,6 +9,6 @@ poetry2nix.mkPoetryApplication {
   projectDir = ../../../.;
 
   overrides = poetry2nix.defaultPoetryOverrides.extend (
-    self: super: { cryptography = python311Packages.cryptography; }
+    final: prev: { cryptography = python311Packages.cryptography; }
   );
 }
