@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "ethercat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1694079333,
-        "narHash": "sha256-6F3zBhnU4CFpiO+Cnbd6ecUuiGH/KUntpPfuSYZ+rAI=",
-        "owner": "etherlab.org",
-        "repo": "ethercat",
-        "rev": "722b2d607c4fc004ebf5204aaede0059c02274f4",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "etherlab.org",
-        "ref": "stable-1.5",
-        "repo": "ethercat",
-        "type": "gitlab"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -382,17 +365,16 @@
     },
     "villas-node": {
       "inputs": {
-        "ethercat": "ethercat",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1711626147,
-        "narHash": "sha256-4gZls8Z1AKrWCO6RD3oiBij2FJzYRiuwW5TP515a+nY=",
+        "lastModified": 1712734737,
+        "narHash": "sha256-HA9CxvwJtDxIMIPvUZfd576J2jmDUTvqFOmWCdXLLN0=",
         "owner": "VILLASframework",
         "repo": "node",
-        "rev": "bcb83e2733ed7b042fd87f9cfdcde37b1b14226d",
+        "rev": "abed592b9d8cdc0b0822803f3f87fec52f486a49",
         "type": "github"
       },
       "original": {
