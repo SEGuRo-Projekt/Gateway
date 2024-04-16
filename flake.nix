@@ -35,6 +35,7 @@
       flake-utils,
       poetry2nix,
       villas-node,
+      seguro-platform,
       ...
     }@inputs:
     let
@@ -97,6 +98,7 @@
       overlays = [
         packagesOverlay
         poetry2nix.overlays.default
+        seguro-platform.overlays.default
       ];
     };
 }
