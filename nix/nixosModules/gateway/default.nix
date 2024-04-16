@@ -11,8 +11,13 @@
   ...
 }@inputs:
 let
-  gatewayConfigPath = "/boot/gateway.json";
-  villasConfigPath = "/boot/villas-node.json";
+  fwPath = "/boot/firmware";
+
+  gatewayConfigPath = "${fwPath}/gateway.json";
+  villasConfigPath = "${fwPath}/villas-node.json";
+  tlsCaCertPath = "${fwPath}/keys/ca.crt";
+  tlsCertPath = "${fwPath}/keys/client.crt";
+  tlsKeyPath = "${fwPath}/keys/client.key";
 
   generateVillasConfigScript = pkgs.writeShellApplication {
     name = "villas-generate-config";
@@ -57,10 +62,16 @@ in
   };
 
   systemd = {
+    globalEnvironment = {
+      TLS_CACERT = tlsCaCertPath;
+      TLS_CERT = tlsCertPath;
+      TLS_KEY = tlsKeyPath;
+    };
+
     services = {
       # Extend villas-node SystemD service to generate VILLASnode config
       # in ExecPreStart
-      villas-node = {
+      villas-node = rec {
         path = [ pkgs.seguro-gateway ];
         serviceConfig = {
           Restart = "on-failure";
@@ -68,7 +79,13 @@ in
           RestartSteps = 16;
           RestartMaxDelaySec = 3600;
 
-          ConditionPathExists = gatewayConfigPath;
+          ConditionPathExists = [
+            gatewayConfigPath
+            tlsCaCertPath
+            tlsCertPath
+            tlsKeyPath
+          ];
+
           ExecStartPre = "${generateVillasConfigScript}/bin/villas-generate-config";
         };
       };

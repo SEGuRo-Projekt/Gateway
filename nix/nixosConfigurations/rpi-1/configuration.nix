@@ -10,13 +10,13 @@
 
   services.openssh.enable = true;
 
-  # Copy default Gateway JSON configuration to /boot if it does not exist yet
-  sdImage.populateRootCommands =
+  # Copy default Gateway JSON configuration to /boot/firmware if it does not exist yet
+  sdImage.populateFirmwareCommands =
     let
       defaultGatewayConfig = "${self}/config/gateway.json";
     in
     ''
-      cp ${defaultGatewayConfig} ./files/boot
+      cp ${defaultGatewayConfig} ./firmware
     '';
 
   nixpkgs = {

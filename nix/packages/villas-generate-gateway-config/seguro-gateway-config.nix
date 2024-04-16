@@ -13,8 +13,9 @@ let
     digestsURI = getEnv "DIGESTS_URI"; # Path to VILLAS digest FIFO
     mqttHost = getEnv "MQTT_HOST";
     mqttPort = getEnv "MQTT_PORT";
-    mqttUsername = getEnv "MQTT_USERNAME";
-    mqttPassword = getEnv "MQTT_PASSWORD";
+    tlsCaCert = getEnv "TLS_CACERT";
+    tlsCert = getEnv "TLS_CERT";
+    tlsKey = getEnv "TLS_KEY";
     debug = getEnv "DEBUG";
   };
 
@@ -32,6 +33,11 @@ let
       format = "protobuf";
       host = mqttHost;
       port = mqttPort;
+      ssl = {
+        cafile = tlsCaCert;
+        certfile = tlsCaCert;
+        keyfile = tlsKey;
+      };
       out = {
         publish = "data/measurements/${config.uid}/${md.uid}/${mp.uid}";
       };
