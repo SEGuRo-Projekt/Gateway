@@ -5,11 +5,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1705309234,
-        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
+        "lastModified": 1710146030,
+        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
+        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
         "type": "github"
       },
       "original": {
@@ -219,11 +219,11 @@
         "poetry2nix": "poetry2nix_2"
       },
       "locked": {
-        "lastModified": 1712232965,
-        "narHash": "sha256-KRnCfDWAv1Zsc5RePDmPR+0W/CZk5LRtIxtT5Ng1JYk=",
+        "lastModified": 1713209397,
+        "narHash": "sha256-9NTSBzzMjkWy44cFBXVi6jwxO9iI2lz1p+XtXMdp2hU=",
         "owner": "SEGuRo-Projekt",
         "repo": "Platform",
-        "rev": "d56b9c3621e93c8838d8d29372452d50e2784b1e",
+        "rev": "cbf473908a03030cf0da5bcd112d8e7a37d69169",
         "type": "github"
       },
       "original": {
@@ -370,11 +370,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1712734737,
-        "narHash": "sha256-HA9CxvwJtDxIMIPvUZfd576J2jmDUTvqFOmWCdXLLN0=",
+        "lastModified": 1713160323,
+        "narHash": "sha256-YRMAoWEQi3UvuAxeDloj7fKtls4F7LzGDnGuAdDsKeI=",
         "owner": "VILLASframework",
         "repo": "node",
-        "rev": "abed592b9d8cdc0b0822803f3f87fec52f486a49",
+        "rev": "9d1c45440caca68ead24e5afeaab10e2ae98655c",
         "type": "github"
       },
       "original": {
