@@ -103,7 +103,6 @@ in
 
     sockets = {
       seguro-signature-sender = {
-        enable = true;
         description = "Sign measurement data via TSA and TPM and publish them via MQTT";
         socketConfig = {
           ListenFIFO = "/run/villas-digests.fifo";
