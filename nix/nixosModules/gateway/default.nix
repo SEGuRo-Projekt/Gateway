@@ -11,8 +11,6 @@
   ...
 }@inputs:
 let
-  seguro-platform = inputs.seguro-platform.packages.${pkgs.system}.seguro-platform;
-
   gatewayConfigPath = "/boot/gateway.json";
   villasConfigPath = "/boot/villas-node.json";
 
@@ -79,7 +77,7 @@ in
         description = "Publish the device status periodically via MQTT";
         startAt = "*-*-* *:*:00/10"; # Run every 10-minutes
         serviceConfig = {
-          ExecStart = "${seguro-platform}/bin/heartbeat-sender";
+          ExecStart = "${pkgs.seguro-platform}/bin/heartbeat-sender";
         };
       };
 
@@ -87,7 +85,7 @@ in
         description = "Sign measurement data via TSA and TPM and publish them via MQTT";
         serviceConfig = {
           StandardInput = "socket";
-          ExecStart = "${seguro-platform}/bin/signature-sender --fifo /dev/stdin";
+          ExecStart = "${pkgs.seguro-platform}/bin/signature-sender --fifo /dev/stdin";
         };
       };
 
