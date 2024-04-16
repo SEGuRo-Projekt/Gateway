@@ -24,7 +24,7 @@ let
   debug = (env.debug or "") != "";
   digestsURI = env.digestsURI or "/run/villas-digests.fifo";
   mqttHost = env.mqttHost or config.mqtt.host or "localhost";
-  mqttPort = env.mqttPort or config.mqtt.port or 1883;
+  mqttPort = env.mqttPort or config.mqtt.port or 8883;
 
   mqttNode = md: mp: {
     name = "mqtt_${md.uid}_${mp.uid}";

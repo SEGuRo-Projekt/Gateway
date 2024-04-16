@@ -63,6 +63,8 @@ in
 
   systemd = {
     globalEnvironment = {
+      MQTT_HOST = "seguro.eonerc.rwth-aachen.de";
+
       TLS_CACERT = tlsCaCertPath;
       TLS_CERT = tlsCertPath;
       TLS_KEY = tlsKeyPath;
