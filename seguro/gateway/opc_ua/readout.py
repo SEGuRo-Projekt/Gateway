@@ -21,7 +21,7 @@ def main():
 
     vn_conf = read_config(VILLAS_NODE_CONFIG)["nodes"][VILLAS_NODE_NAME]
     opcua_objects = parse_opcua_objects(vn_conf)
-    device_conf = validate_config(vn_conf["opcua"])
+    device_conf = validate_config(vn_conf["opcua_config"])
     mode = (
         Mode[device_conf["mode"]]
         if "mode" in device_conf.keys()
