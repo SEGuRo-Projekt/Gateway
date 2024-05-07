@@ -51,7 +51,7 @@ in
   ];
 
   services.villas.node = {
-    enable = false;
+    enable = true;
     configPath = villasConfigPath;
     package = pkgs.villas;
   };
@@ -60,7 +60,7 @@ in
     services = {
       # Extend villas-node SystemD service to generate VILLASnode config
       # in ExecPreStart
-      villas-node = {
+      villas-node = lib.mkIf config.services.villas.node.enable {
         path = [ pkgs.seguro-gateway ];
         serviceConfig = {
           Restart = "on-failure";
