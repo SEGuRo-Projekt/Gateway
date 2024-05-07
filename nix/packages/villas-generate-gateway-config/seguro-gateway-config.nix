@@ -80,7 +80,7 @@ let
                 inherit (md) uid;
                 inherit (md) uri;
                 port = md.port or 4840;
-                sending_rate = md.sending_rate or 100;
+                sending_rate = md.sending_rate or 100.0;
               };
             };
       in
