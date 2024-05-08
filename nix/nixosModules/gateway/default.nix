@@ -105,6 +105,15 @@ in
     };
 
     systemd = {
+      globalEnvironment = {
+        MQTT_HOST = cfg.mqtt.host;
+        MQTT_PORT = cfg.mqtt.port;
+
+        TLS_KEY = cfg.tls.key;
+        TLS_CERT = cfg.tls.cert;
+        TLS_CACERT = cfg.tls.caCert;
+      };
+
       services = {
         # Extend villas-node SystemD service to generate VILLASnode config
         # in ExecPreStart
@@ -116,7 +125,14 @@ in
             RestartSteps = 16;
             RestartMaxDelaySec = 3600;
 
-            ConditionPathExists = cfg.gatewayConfigPath;
+            ConditionPathExists = with cfg; [
+              gatewayConfigPath
+
+              tls.caCert
+              tls.key
+              tls.cert
+            ];
+
             ExecStartPre = "${generateVillasConfigScript}/bin/villas-generate-config";
           };
         };
