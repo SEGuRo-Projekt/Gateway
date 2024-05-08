@@ -7,31 +7,25 @@
 }:
 with builtins // lib;
 let
-  # Optional environment variables
-  env = lib.filterAttrs (n: v: v != "") {
-    demoData = getEnv "DEMO_DATA"; # Generate random test data instead of communicating with real OPC-UA device
-    digestsURI = getEnv "DIGESTS_URI"; # Path to VILLAS digest FIFO
-    mqttHost = getEnv "MQTT_HOST";
-    mqttPort = getEnv "MQTT_PORT";
-    mqttUsername = getEnv "MQTT_USERNAME";
-    mqttPassword = getEnv "MQTT_PASSWORD";
-    debug = getEnv "DEBUG";
-  };
+  hasEnv = variable: getEnv variable != "";
+  getEnvWithDefault = variable: default: if hasEnv variable then getEnv variable else default;
 
   # Default values
-  demoData = (env.demoData or "") != "";
-  debug = (env.debug or "") != "";
-  digestsURI = env.digestsURI or "/run/villas-digests.fifo";
-  mqttHost = env.mqttHost or config.mqtt.host or "localhost";
-  mqttPort = env.mqttPort or config.mqtt.port or 1883;
+  demoData = hasEnv "DEMO_DATA";
+  debug = hasEnv "DEBUG";
 
   mqttNode = md: mp: {
     name = "mqtt_${md.uid}_${mp.uid}";
     value = {
       type = "mqtt";
       format = "protobuf";
-      host = mqttHost;
-      port = mqttPort;
+      host = getEnvWithDefault "MQTT_HOST" config.mqtt.host or "localhost";
+      port = getEnvWithDefault "MQTT_PORT" config.mqtt.port or 1883;
+      ssl = {
+        cafile = getEnvWithDefault "TLS_CACERT" config.tls.cacert or "/boot/ca.crt";
+        certfile = getEnvWithDefault "TLS_CERT" config.tls.cert or "/boot/mp.crt";
+        keyfile = getEnvWithDefault "TLS_KEY" config.tls.key or "/boot/mp.key";
+      };
       out = {
         publish = "data/measurements/${config.uid}/${md.uid}/${mp.uid}";
       };
@@ -101,6 +95,10 @@ in
 {
   stats = 1.0;
 
+  log = {
+    level = if debug then "debug" else "info";
+  };
+
   nodes = mqttNodes // opcuaNodes;
 
   paths = concatMap (
@@ -118,7 +116,7 @@ in
         }
         {
           type = "digest";
-          uri = "${digestsURI}";
+          uri = getEnvWithDefault "DIGESTS_URI" "/run/villas-digests.fifo";
           algorithm = "sha256";
         }
       ] ++ lib.optionals debug [ { type = "print"; } ];
