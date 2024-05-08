@@ -92,6 +92,7 @@ in
     environment.systemPackages = with pkgs; [
       villas-node
       seguro-platform
+      seguro-gateway
       mosquitto
       tpm2-tools
       villas-generate-gateway-config
