@@ -20,7 +20,7 @@ let
       type = "mqtt";
       format = "protobuf";
       host = getEnvWithDefault "MQTT_HOST" config.mqtt.host or "localhost";
-      port = getEnvWithDefault "MQTT_PORT" config.mqtt.port or 1883;
+      port = lib.strings.toInt (getEnvWithDefault "MQTT_PORT" config.mqtt.port or "8883");
       ssl = {
         cafile = getEnvWithDefault "TLS_CACERT" config.tls.cacert or "/boot/ca.crt";
         certfile = getEnvWithDefault "TLS_CERT" config.tls.cert or "/boot/mp.crt";

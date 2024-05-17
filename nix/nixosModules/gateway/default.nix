@@ -28,7 +28,6 @@ in
 
   options = with lib; {
     seguro.gateway = {
-      enable = mkEnableOption "SEGuRo Platform";
 
       tls = {
         key = mkOption {
@@ -55,7 +54,7 @@ in
 
         port = mkOption {
           type = types.port;
-          default = 8333;
+          default = 8883;
         };
       };
 
@@ -71,7 +70,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     nixpkgs.overlays = [
       inputs.villas-node.overlays.default
       # TODO: Cross-build of hiredis is broken
@@ -101,13 +100,13 @@ in
     services.villas.node = {
       enable = true;
       configPath = cfg.villasConfigPath;
-      package = pkgs.villas;
+      package = pkgs.villas-node;
     };
 
     systemd = {
       globalEnvironment = {
         MQTT_HOST = cfg.mqtt.host;
-        MQTT_PORT = cfg.mqtt.port;
+        MQTT_PORT = toString cfg.mqtt.port;
 
         TLS_KEY = cfg.tls.key;
         TLS_CERT = cfg.tls.cert;
