@@ -133,6 +133,7 @@ in
             ];
 
             ExecStartPre = "${generateVillasConfigScript}/bin/villas-generate-config";
+            ExecStart = lib.mkForce "${config.services.villas.node.package}/bin/villas-node ${config.services.villas.node.configPath}";
           };
         };
 
