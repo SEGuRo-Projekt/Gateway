@@ -65,7 +65,7 @@
       {
         # Define the SD-Card image as our default build derivation
         # This allows us to simply run "nix build" inside our repo to build an image.
-        packages.default = self.nixosConfigurations.rpi-1.config.system.build.sdImage;
+        packages.default = self.nixosConfigurations.seguro-rpi-1.config.system.build.sdImage;
 
         devShells.default = pkgs.callPackage ./nix/shell.nix { };
       }
