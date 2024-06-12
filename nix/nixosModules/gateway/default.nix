@@ -32,17 +32,17 @@ in
       tls = {
         key = mkOption {
           type = types.path;
-          default = "/boot/mp.key";
+          default = "/boot/firmware/keys/mp.key";
         };
 
         cert = mkOption {
           type = types.path;
-          default = "/boot/mp.crt";
+          default = "/boot/firmware/keys/mp.crt";
         };
 
         caCert = mkOption {
           type = types.path;
-          default = "/boot/ca.crt";
+          default = "/boot/firmware/keys/ca.crt";
         };
       };
 
@@ -60,12 +60,12 @@ in
 
       gatewayConfigPath = mkOption {
         type = types.path;
-        default = "/boot/gateway.json";
+        default = "/boot/firmware/gateway.json";
       };
 
       villasConfigPath = mkOption {
         type = types.path;
-        default = "/boot/villas-node.json";
+        default = "/tmp/villas-node.json";
       };
     };
   };

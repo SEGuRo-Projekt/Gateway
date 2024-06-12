@@ -15,8 +15,9 @@
       defaultGatewayConfig = "${self}/config/gateway.json";
     in
     ''
-      if ! [ -f /boot/gateway.json ]; then
-        cp ${defaultGatewayConfig} /boot/gateway.json
+      if ! [ -f /boot/firmware/gateway.json ]; then
+        mkdir -p /boot/firmware
+        cp ${defaultGatewayConfig} /boot/firmware/gateway.json
       fi
     '';
 

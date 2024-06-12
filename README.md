@@ -39,8 +39,8 @@ Then check the VILLASnode service and its config:
 ```shell
 systemctl status villas-node
 
-cat /boot/gateway.json
-cat /boot/villas-config.json
+cat /boot/firmware/gateway.json
+cat /boot/firmware/villas-config.json
 ```
 
 You can exit the VM console by `Ctrl+A + X`.
