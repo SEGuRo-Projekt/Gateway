@@ -57,7 +57,7 @@ def construct_browse_paths(uid: str, measurements: dict):
     paths = {}
 
     for measurement, attributes in measurements.items():
-        if opcua_objects[measurement] == Type.VOLTAGE:
+        if opcua_objects.get(measurement) == Type.VOLTAGE:
 
             valtypes = ["ULNComplexRe", "ULNComplexIm"]
             for attribute in attributes:
@@ -78,7 +78,7 @@ def construct_browse_paths(uid: str, measurements: dict):
                             + [f"2:{attribute}"]
                         )
 
-        elif opcua_objects[measurement] == Type.CURRENT:
+        elif opcua_objects.get(measurement) == Type.CURRENT:
             valtypes = ["IComplexRe", "IComplexIm"]
             for attribute in attributes:
 
@@ -119,7 +119,33 @@ def construct_browse_paths(uid: str, measurements: dict):
                             + [f"2:{attribute}"]
                         )
 
-        elif opcua_objects[measurement] == Type.FREQUENCY:
+        elif opcua_objects.get(measurement) == Type.POWER:
+            valtypes = [("PowerComplexRe", "P"), ("PowerComplexIm", "Q")]
+            for attribute in attributes:
+                # for attribute in attributes:
+                group, channel, _ = measurement.split("_")
+                for valtype in valtypes:
+                    if attribute == "Momentary":
+                        paths[
+                            f"{uid}/{measurement}/{valtype[0]}/Momentary"
+                        ] = (
+                            base
+                            + [f"2:{group}"]
+                            + [f"2:{channel}"]
+                            + [f"2:{valtype[1]}"]
+                        )
+                    else:
+                        paths[
+                            f"{uid}/{measurement}/{valtype[0]}/{attribute}"
+                        ] = (
+                            base
+                            + [f"2:{group}"]
+                            + [f"2:{channel}"]
+                            + [f"2:{valtype}"]
+                            + [f"2:{attribute[1]}"]
+                        )
+
+        elif opcua_objects.get(measurement) == Type.FREQUENCY:
             for attribute in attributes:
                 if attribute == "Momentary":
                     paths[f"{uid}/Freq/Momentary"] = (
@@ -129,6 +155,13 @@ def construct_browse_paths(uid: str, measurements: dict):
                     paths[f"{uid}/Freq/{attribute}"] = (
                         base + ["2:UG"] + ["2:Freq"] + [f"2:{attribute}"]
                     )
+
+        else:
+            paths[measurement] = base + measurement.split(",")
+            log_msg(
+                "Measurement object not recognized, "
+                + f"interpreting as browse path {paths[measurement]}..."
+            )
 
     return paths
 
