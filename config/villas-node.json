@@ -1,4 +1,7 @@
 {
+  "log": {
+    "level": "info"
+  },
   "nodes": {
     "mqtt_md1_mp1": {
       "format": "protobuf",
@@ -6,25 +9,12 @@
       "out": {
         "publish": "data/measurements/loc1/md1/mp1"
       },
-      "port": 1883,
-      "type": "mqtt"
-    },
-    "mqtt_md1_mp2": {
-      "format": "protobuf",
-      "host": "localhost",
-      "out": {
-        "publish": "data/measurements/loc1/md1/mp2"
+      "port": 8883,
+      "ssl": {
+        "cafile": "/boot/ca.crt",
+        "certfile": "/boot/mp.crt",
+        "keyfile": "/boot/mp.key"
       },
-      "port": 1883,
-      "type": "mqtt"
-    },
-    "mqtt_md2_mp1": {
-      "format": "protobuf",
-      "host": "localhost",
-      "out": {
-        "publish": "data/measurements/loc1/md2/mp1"
-      },
-      "port": 1883,
       "type": "mqtt"
     },
     "opcua_md1": {
@@ -77,89 +67,18 @@
             "type": "complex"
           },
           {
-            "name": "ig1_i4",
+            "name": "ig1_i1_power",
             "opcua_attr": "Momentary",
-            "opcua_obj": "IG1_I4",
-            "type": "complex"
-          },
-          {
-            "name": "ig2_i1",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "IG2_I1",
-            "type": "complex"
-          },
-          {
-            "name": "ig2_i2",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "IG2_I2",
+            "opcua_obj": "IG1_I1_Power",
             "type": "complex"
           }
         ]
       },
       "opcua_config": {
         "port": 4840,
-        "sending_rate": 100,
+        "sending_rate": 1.0,
         "uid": "md1",
-        "uri": "janitza-umg-uv1.acs-lab.eonerc.rwth-aachen.de"
-      },
-      "type": "exec"
-    },
-    "opcua_md2": {
-      "exec": [
-        "opcua-readout"
-      ],
-      "flush": true,
-      "format": "villas.human",
-      "in": {
-        "hooks": [
-          {
-            "type": "stats"
-          }
-        ],
-        "signals": [
-          {
-            "name": "u1",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "U1",
-            "type": "complex"
-          },
-          {
-            "name": "u2",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "U2",
-            "type": "complex"
-          },
-          {
-            "name": "u3",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "U3",
-            "type": "complex"
-          },
-          {
-            "name": "ig1_i1",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "IG1_I1",
-            "type": "complex"
-          },
-          {
-            "name": "ig1_i2",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "IG1_I2",
-            "type": "complex"
-          },
-          {
-            "name": "ig1_i3",
-            "opcua_attr": "Momentary",
-            "opcua_obj": "IG1_I3",
-            "type": "complex"
-          }
-        ]
-      },
-      "opcua_config": {
-        "port": 4840,
-        "sending_rate": 100,
-        "uid": "md2",
-        "uri": "janitza-umg-uv2.acs-lab.eonerc.rwth-aachen.de"
+        "uri": "janitza-umg.acs-lab.eonerc.rwth-aachen.de"
       },
       "type": "exec"
     }
@@ -185,57 +104,10 @@
         "opcua_md1.u3",
         "opcua_md1.ig1_i1",
         "opcua_md1.ig1_i2",
-        "opcua_md1.ig1_i3"
+        "opcua_md1.ig1_i3",
+        "opcua_md1.ig1_i1_power"
       ],
       "out": "mqtt_md1_mp1"
-    },
-    {
-      "hooks": [
-        {
-          "interval": 10,
-          "trigger": "timestamp",
-          "type": "frame",
-          "unit": "seconds"
-        },
-        {
-          "algorithm": "sha256",
-          "type": "digest",
-          "uri": "/run/villas-digests.fifo"
-        }
-      ],
-      "in": [
-        "opcua_md1.u1",
-        "opcua_md1.u2",
-        "opcua_md1.u3",
-        "opcua_md1.ig1_i4",
-        "opcua_md1.ig2_i1",
-        "opcua_md1.ig2_i2"
-      ],
-      "out": "mqtt_md1_mp2"
-    },
-    {
-      "hooks": [
-        {
-          "interval": 10,
-          "trigger": "timestamp",
-          "type": "frame",
-          "unit": "seconds"
-        },
-        {
-          "algorithm": "sha256",
-          "type": "digest",
-          "uri": "/run/villas-digests.fifo"
-        }
-      ],
-      "in": [
-        "opcua_md2.u1",
-        "opcua_md2.u2",
-        "opcua_md2.u3",
-        "opcua_md2.ig1_i1",
-        "opcua_md2.ig1_i2",
-        "opcua_md2.ig1_i3"
-      ],
-      "out": "mqtt_md2_mp1"
     }
   ],
   "stats": 1.0

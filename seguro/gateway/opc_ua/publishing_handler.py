@@ -19,15 +19,24 @@ class PublishingHandler:
         """
         reduced_complex = {}
         for key, value in values.items():
-            if "Re" in key:
-                reduced_complex[key.replace("Re", "")] = str(value)
-            elif "Im" in key:
+            if (
+                "Im" in key
+                and reduced_complex.get(key.replace("Im", "Re")) is not None
+            ):
                 if str(value).startswith("-"):
-                    reduced_complex[key.replace("Im", "")] += str(value) + "i"
-                else:
-                    reduced_complex[key.replace("Im", "")] += (
-                        "+" + str(value) + "i"
+                    reduced_complex[key.replace("Im", "")] = (
+                        str(reduced_complex[key.replace("Im", "Re")])
+                        + str(value)
+                        + "i"
                     )
+                else:
+                    reduced_complex[key.replace("Im", "")] = (
+                        str(reduced_complex[key.replace("Im", "Re")])
+                        + "+"
+                        + str(value)
+                        + "i"
+                    )
+                del reduced_complex[key.replace("Im", "Re")]
             else:
                 reduced_complex[key] = value
         return reduced_complex
