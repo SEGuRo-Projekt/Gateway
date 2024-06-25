@@ -11,6 +11,7 @@ class Type(Enum):
     VOLTAGE = 0
     CURRENT = 1
     FREQUENCY = 2
+    POWER = 3
 
 
 opcua_objects = {
@@ -30,6 +31,18 @@ opcua_objects = {
     "IG3_I2": Type.CURRENT,
     "IG3_I3": Type.CURRENT,
     "IG3_I4": Type.CURRENT,
+    "IG1_I1_Power": Type.POWER,
+    "IG1_I2_Power": Type.POWER,
+    "IG1_I3_Power": Type.POWER,
+    "IG1_I4_Power": Type.POWER,
+    "IG2_I1_Power": Type.POWER,
+    "IG2_I2_Power": Type.POWER,
+    "IG2_I3_Power": Type.POWER,
+    "IG2_I4_Power": Type.POWER,
+    "IG3_I1_Power": Type.POWER,
+    "IG3_I2_Power": Type.POWER,
+    "IG3_I3_Power": Type.POWER,
+    "IG3_I4_Power": Type.POWER,
     "Module1_IG1_I1": Type.CURRENT,
     "Module1_IG1_I2": Type.CURRENT,
     "Module1_IG1_I3": Type.CURRENT,
@@ -38,6 +51,14 @@ opcua_objects = {
     "Module1_IG2_I2": Type.CURRENT,
     "Module1_IG2_I3": Type.CURRENT,
     "Module1_IG2_I4": Type.CURRENT,
+    "Module1_IG1_I1_Power": Type.POWER,
+    "Module1_IG1_I2_Power": Type.POWER,
+    "Module1_IG1_I3_Power": Type.POWER,
+    "Module1_IG1_I4_Power": Type.POWER,
+    "Module1_IG2_I1_Power": Type.POWER,
+    "Module1_IG2_I2_Power": Type.POWER,
+    "Module1_IG2_I3_Power": Type.POWER,
+    "Module1_IG2_I4_Power": Type.POWER,
 }
 
 
