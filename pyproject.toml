@@ -8,7 +8,7 @@ description = ""
 authors = ["Felix Wege <felix.wege@eonerc.rwth-aachen.de>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{include = "seguro"}]
+packages = [{ include = "seguro" }]
 
 [tool.poetry.urls]
 "Homepage" = "https://github.com/SEGuRo-Projekt/Gateway"
@@ -19,7 +19,6 @@ python = "^3.11"
 asyncua = "1.0.4"
 pyyaml = "^6.0.1"
 schema = "^0.7.5"
-cryptography = "42.0.5"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "6.0.0"
