@@ -123,7 +123,6 @@ in
       tpm2-tools
       villas-generate-gateway-config
       listenMeasurements
-      parseTopic
     ];
 
     services.villas.node = {
