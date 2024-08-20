@@ -4,6 +4,7 @@
 {
   imports = with self.nixosModules; [
     rpi-base
+    rpi4-tpm2
     gateway
     users
   ];

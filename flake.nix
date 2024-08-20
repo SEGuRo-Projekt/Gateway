@@ -23,7 +23,8 @@
     };
 
     seguro-platform = {
-      url = "github:SEGuRo-Projekt/Platform";
+      # url = "github:SEGuRo-Projekt/Platform";
+      url = "path:/home/stv0g/workspace/seguro/plattform";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -34,7 +35,6 @@
       nixpkgs,
       flake-utils,
       poetry2nix,
-      villas-node,
       seguro-platform,
       ...
     }@inputs:

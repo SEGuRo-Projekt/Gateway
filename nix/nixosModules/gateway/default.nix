@@ -28,7 +28,6 @@ in
 
   options = with lib; {
     seguro.gateway = {
-
       tls = {
         key = mkOption {
           type = types.path;
@@ -38,6 +37,11 @@ in
         cert = mkOption {
           type = types.path;
           default = "/boot/firmware/keys/mp.crt";
+        };
+
+        csr = mkOption {
+          type = types.path;
+          default = "/boot/firmware/keys/mp.csr";
         };
 
         caCert = mkOption {
@@ -73,25 +77,14 @@ in
   config = {
     nixpkgs.overlays = [
       inputs.villas-node.overlays.default
-      # TODO: Cross-build of hiredis is broken
-      (final: prev: { villas-node = prev.villas-node.override { withNodeRedis = false; }; })
-
-      # TODO: Enable EtherCAT on aarch64
-      (final: prev: {
-        ethercat = prev.ethercat.overrideAttrs (
-          finalAttrs: previousAttrs: {
-            meta = previousAttrs.meta or { } // {
-              platforms = prev.lib.platforms.linux;
-            };
-          }
-        );
-      })
+      (final: prev: { villas-node = prev.villas-node.override { withNodeRedis = false; withNodeWebrtc = false; withNodeEthercat = false; }; })
     ];
 
     environment.systemPackages = with pkgs; [
       villas-node
       seguro-platform
       seguro-gateway
+      seguro-generate-keys
       mosquitto
       tpm2-tools
       villas-generate-gateway-config
@@ -109,6 +102,7 @@ in
         MQTT_PORT = toString cfg.mqtt.port;
 
         TLS_KEY = cfg.tls.key;
+        TLS_CSR = cfg.tls.csr;
         TLS_CERT = cfg.tls.cert;
         TLS_CACERT = cfg.tls.caCert;
       };
@@ -124,6 +118,11 @@ in
             RestartSteps = 16;
             RestartMaxDelaySec = 3600;
 
+            ExecStartPre = "${generateVillasConfigScript}/bin/villas-generate-config";
+            ExecStart = lib.mkForce "${config.services.villas.node.package}/bin/villas-node ${config.services.villas.node.configPath}";
+          };
+
+          unitConfig = {
             ConditionPathExists = with cfg; [
               gatewayConfigPath
 
@@ -131,9 +130,6 @@ in
               tls.key
               tls.cert
             ];
-
-            ExecStartPre = "${generateVillasConfigScript}/bin/villas-generate-config";
-            ExecStart = lib.mkForce "${config.services.villas.node.package}/bin/villas-node ${config.services.villas.node.configPath}";
           };
         };
 
@@ -153,13 +149,32 @@ in
           };
         };
 
-        opcua-mockup = {
+        seguro-opcua-mockup = {
           enable = false;
 
           description = "A mockup of an OPC-UA measurement device";
           serviceConfig = {
             ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup";
           };
+        };
+
+        seguro-generate-keys = {
+          description = "Generate measurement device specific keys during first boot";
+          unitConfig = {
+            ConditionPathExists = with cfg; [
+              "!${tls.csr}"
+              "!${tls.key}"
+              "!${tls.cert}"
+            ];
+          };
+
+          serviceConfig={
+            ExecStart = "${lib.getExe pkgs.seguro-generate-keys}";
+          };
+
+          wantedBy = [
+            "multi-user.target"
+          ];
         };
       };
 

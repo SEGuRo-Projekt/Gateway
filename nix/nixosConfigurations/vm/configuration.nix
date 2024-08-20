@@ -2,7 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 { self, ... }:
 {
-  imports = [ self.nixosModules.gateway ];
+  imports = with self.nixosModules; [
+    gateway
+    tpm2
+  ];
 
   nixos-shell.mounts = {
     mountHome = false;

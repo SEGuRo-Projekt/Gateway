@@ -7,7 +7,7 @@
   poetry,
   poetry2nix,
   reuse,
-  python311Packages,
+  python3Packages,
   pre-commit,
   nix-render-template,
   villas-generate-gateway-config,
@@ -20,7 +20,7 @@ let
       seguro = ../seguro;
     };
     overrides = poetry2nix.defaultPoetryOverrides.extend (
-      final: prev: { cryptography = python311Packages.cryptography; }
+      final: prev: { cryptography = python3Packages.cryptography; }
     );
   };
 
