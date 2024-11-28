@@ -22,6 +22,33 @@ let
       villas-generate-gateway-config < ${cfg.gatewayConfigPath} > ${cfg.villasConfigPath}
     '';
   };
+
+  parseTopic = pkgs.writeShellApplication {
+    name = "parse-topic";
+    runtimeInputs = with pkgs; [ jq ];
+    text = ''
+      jq -r '.[]
+      | try to_entries[]
+      | select(.key | try startswith("mqtt"))
+      | .value.out.publish' ${cfg.villasConfigPath}
+    '';
+
+  };
+
+  listenMeasurements = pkgs.writeShellApplication {
+    name = "listen-measurements";
+    runtimeInputs = with pkgs; [ parseTopic ];
+    text = ''
+      protobuf-subscriber \
+      --host ${cfg.mqtt.host} \
+      --port ${toString cfg.mqtt.port} \
+      --cafile ${cfg.tls.caCert} \
+      --cert ${cfg.tls.cert} \
+      --key ${cfg.tls.key} \
+      --topic "$(parse-topic)" \
+      --id "$HOSTNAME"-sub
+    '';
+  };
 in
 {
   imports = [ inputs.villas-node.nixosModules.default ];
@@ -95,6 +122,7 @@ in
       mosquitto
       tpm2-tools
       villas-generate-gateway-config
+      listenMeasurements
     ];
 
     services.villas.node = {

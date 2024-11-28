@@ -219,11 +219,11 @@
         "poetry2nix": "poetry2nix_2"
       },
       "locked": {
-        "lastModified": 1716321052,
-        "narHash": "sha256-g3uDRcEWunaED8bEsUETB0aMWghO7EtZC/7a9A1Z9HE=",
+        "lastModified": 1723014348,
+        "narHash": "sha256-QugnVACg0iUuji0RAHi/Uxf+wcT9pJT+xpmrO/ESJjo=",
         "owner": "SEGuRo-Projekt",
         "repo": "Platform",
-        "rev": "af98a35576b2512582a4020f8bcc46dd21c470cb",
+        "rev": "fae95e65d721a43777b6a5279a975954a04edb76",
         "type": "github"
       },
       "original": {

@@ -22,9 +22,9 @@ let
       host = getEnvWithDefault "MQTT_HOST" config.mqtt.host or "localhost";
       port = lib.strings.toInt (getEnvWithDefault "MQTT_PORT" config.mqtt.port or "8883");
       ssl = {
-        cafile = getEnvWithDefault "TLS_CACERT" config.tls.cacert or "/boot/ca.crt";
-        certfile = getEnvWithDefault "TLS_CERT" config.tls.cert or "/boot/mp.crt";
-        keyfile = getEnvWithDefault "TLS_KEY" config.tls.key or "/boot/mp.key";
+        cafile = getEnvWithDefault "TLS_CACERT" config.tls.cacert or "/boot/firmware/keys/ca.crt";
+        certfile = getEnvWithDefault "TLS_CERT" config.tls.cert or "/boot/firmware/keys/mp.crt";
+        keyfile = getEnvWithDefault "TLS_KEY" config.tls.key or "/boot/firmware/keys/mp.key";
       };
       out = {
         publish = "data/measurements/${config.uid}/${md.uid}/${mp.uid}";
