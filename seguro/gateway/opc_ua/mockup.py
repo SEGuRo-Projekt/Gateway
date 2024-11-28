@@ -45,14 +45,20 @@ async def run_server(rate: float, endpoint: str, uri):
     ig1_i1 = await ig1.add_object(idx, "I1")
     variables["ig1_i1_im"] = await ig1_i1.add_variable(idx, "IComplexIm", 0.0)
     variables["ig1_i1_re"] = await ig1_i1.add_variable(idx, "IComplexRe", 0.0)
+    variables["ig1_i1_p"] = await ig1_i1.add_variable(idx, "P", 0.0)
+    variables["ig1_i1_q"] = await ig1_i1.add_variable(idx, "Q", 0.0)
 
     ig1_i2 = await ig1.add_object(idx, "I2")
     variables["ig1_i2_im"] = await ig1_i2.add_variable(idx, "IComplexIm", 0.0)
     variables["ig1_i2_re"] = await ig1_i2.add_variable(idx, "IComplexRe", 0.0)
+    variables["ig1_i2_p"] = await ig1_i2.add_variable(idx, "P", 0.0)
+    variables["ig1_i2_q"] = await ig1_i2.add_variable(idx, "Q", 0.0)
 
     ig1_i3 = await ig1.add_object(idx, "I3")
     variables["ig1_i3_im"] = await ig1_i3.add_variable(idx, "IComplexIm", 0.0)
     variables["ig1_i3_re"] = await ig1_i3.add_variable(idx, "IComplexRe", 0.0)
+    variables["ig1_i3_p"] = await ig1_i3.add_variable(idx, "P", 0.0)
+    variables["ig1_i3_q"] = await ig1_i3.add_variable(idx, "Q", 0.0)
 
     # Module
     modules = await device.add_object(idx, "Modules")
@@ -66,6 +72,8 @@ async def run_server(rate: float, endpoint: str, uri):
     variables["mod1_ig1_i1_re"] = await mod1_ig1_i1.add_variable(
         idx, "IComplexRe", 0.0
     )
+    variables["mod1_ig1_i1_p"] = await mod1_ig1_i1.add_variable(idx, "P", 0.0)
+    variables["mod1_ig1_i1_q"] = await mod1_ig1_i1.add_variable(idx, "Q", 0.0)
 
     mod1_ig1_i2 = await mod1_ig1.add_object(idx, "I2")
     variables["mod1_ig1_i2_im"] = await mod1_ig1_i2.add_variable(
@@ -74,6 +82,8 @@ async def run_server(rate: float, endpoint: str, uri):
     variables["mod1_ig1_i2_re"] = await mod1_ig1_i2.add_variable(
         idx, "IComplexRe", 0.0
     )
+    variables["mod1_ig1_i2_p"] = await mod1_ig1_i2.add_variable(idx, "P", 0.0)
+    variables["mod1_ig1_i2_q"] = await mod1_ig1_i2.add_variable(idx, "Q", 0.0)
 
     mod1_ig1_i3 = await mod1_ig1.add_object(idx, "I3")
     variables["mod1_ig1_i3_im"] = await mod1_ig1_i3.add_variable(
@@ -82,6 +92,8 @@ async def run_server(rate: float, endpoint: str, uri):
     variables["mod1_ig1_i3_re"] = await mod1_ig1_i3.add_variable(
         idx, "IComplexRe", 0.0
     )
+    variables["mod1_ig1_i3_p"] = await mod1_ig1_i3.add_variable(idx, "P", 0.0)
+    variables["mod1_ig1_i3_q"] = await mod1_ig1_i3.add_variable(idx, "Q", 0.0)
 
     mod1_ig2 = await mod1_measurements.add_object(idx, "IG2")
     mod1_ig2_i1 = await mod1_ig2.add_object(idx, "I1")
@@ -91,6 +103,9 @@ async def run_server(rate: float, endpoint: str, uri):
     variables["mod1_ig2_i1_re"] = await mod1_ig2_i1.add_variable(
         idx, "IComplexRe", 0.0
     )
+    variables["mod1_ig2_i1_p"] = await mod1_ig2_i1.add_variable(idx, "P", 0.0)
+    variables["mod1_ig2_i1_q"] = await mod1_ig2_i1.add_variable(idx, "Q", 0.0)
+
     mod1_ig2_i2 = await mod1_ig2.add_object(idx, "I2")
     variables["mod1_ig2_i2_im"] = await mod1_ig2_i2.add_variable(
         idx, "IComplexIm", 0.0
@@ -98,6 +113,8 @@ async def run_server(rate: float, endpoint: str, uri):
     variables["mod1_ig2_i2_re"] = await mod1_ig2_i2.add_variable(
         idx, "IComplexRe", 0.0
     )
+    variables["mod1_ig2_i2_p"] = await mod1_ig2_i2.add_variable(idx, "P", 0.0)
+    variables["mod1_ig2_i2_q"] = await mod1_ig2_i2.add_variable(idx, "Q", 0.0)
 
     mod1_ig2_i3 = await mod1_ig2.add_object(idx, "I3")
     variables["mod1_ig2_i3_im"] = await mod1_ig2_i3.add_variable(
@@ -106,6 +123,8 @@ async def run_server(rate: float, endpoint: str, uri):
     variables["mod1_ig2_i3_re"] = await mod1_ig2_i3.add_variable(
         idx, "IComplexRe", 0.0
     )
+    variables["mod1_ig2_i3_p"] = await mod1_ig2_i3.add_variable(idx, "P", 0.0)
+    variables["mod1_ig2_i3_q"] = await mod1_ig2_i3.add_variable(idx, "Q", 0.0)
 
     for _, var in variables.items():
         await var.set_writable()
@@ -133,6 +152,10 @@ async def run_server(rate: float, endpoint: str, uri):
                         await obj.write_value(random.uniform(0.0, 1.15))
                     if "re" in var.lower():
                         await obj.write_value(random.uniform(22.7, 23.5))
+                    if "p" in var.lower():
+                        await obj.write_value(random.uniform(5152.9, 5522.5))
+                    if "q" in var.lower():
+                        await obj.write_value(random.uniform(0.0, 17.25))
 
 
 def main() -> int:
