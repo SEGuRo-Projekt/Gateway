@@ -20,7 +20,7 @@ async def run_server(rate: float, endpoint: str, uri):
     idx = await server.register_namespace(uri)
 
     device = await server.nodes.objects.add_object(idx, "Device")
-    measurements = await device.add_object(idx, "Measurement")
+    measurements = await device.add_object(idx, "Measurements")
 
     # Voltages
     ug = await measurements.add_object(idx, "UG")
