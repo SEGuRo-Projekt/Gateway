@@ -161,8 +161,6 @@ in
         };
 
         opcua-mockup = {
-          enable = false;
-
           description = "A mockup of an OPC-UA measurement device";
           serviceConfig = {
             ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup";
@@ -173,6 +171,7 @@ in
       sockets = {
         seguro-signature-sender = {
           description = "Sign measurement data via TSA and TPM and publish them via MQTT";
+          wantedBy = [ "multi-user.target" ];
           socketConfig = {
             ListenFIFO = "/run/villas-digests.fifo";
           };
