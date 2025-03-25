@@ -71,6 +71,8 @@ in
   };
 
   config = {
+    time.timeZone = "Europe/Berlin";
+
     nixpkgs.overlays = [
       inputs.villas-node.overlays.default
       # TODO: Cross-build of hiredis is broken
