@@ -97,10 +97,17 @@ in
       villas-generate-gateway-config
     ];
 
-    services.villas.node = {
-      enable = true;
-      configPath = cfg.villasConfigPath;
-      package = pkgs.villas-node;
+    services = {
+      villas.node = {
+        enable = true;
+        configPath = cfg.villasConfigPath;
+        package = pkgs.villas-node;
+      };
+
+      getty = {
+        greetingLine = lib.mkForce ''<<< Welcome to the SEGuRo Gateway OS ${config.system.nixos.label} (\m) - \l >>>'';
+        helpLine = lib.mkForce "\nPlease visit the SEGuRo online documentation for support: https://seguro.eonerc.rwth-aachen.de/";
+      };
     };
 
     systemd = {
