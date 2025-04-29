@@ -6,9 +6,18 @@
     rpi-base
     gateway
     users
+    (fetchTarball {
+      url = "https://github.com/nix-community/nixos-vscode-server/tarball/8b6db451de46ecf9b4ab3d01ef76e59957ff549f";
+      sha256 = "09j4kvsxw1d5dvnhbsgih0icbrxqv90nzf0b589rb5z6gnzwjnqf";
+    })
   ];
 
+  networking = {
+    domain = "gateways.seguro.eonerc.rwth-aachen.de";
+  };
+
   services.openssh.enable = true;
+  services.vscode-server.enable = true;
 
   sdImage.populateFirmwareCommands =
     let

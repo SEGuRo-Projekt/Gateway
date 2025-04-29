@@ -10,6 +10,8 @@
 {
   imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
 
+  networking.hostName = "";
+
   boot = {
     supportedFilesystems = lib.mkForce [
       "ext4"
@@ -42,6 +44,4 @@
       );
     })
   ];
-
-  networking.hostName = hostname;
 }

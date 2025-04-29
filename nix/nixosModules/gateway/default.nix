@@ -32,7 +32,6 @@ let
       | select(.key | try startswith("mqtt"))
       | .value.out.publish' ${cfg.villasConfigPath}
     '';
-
   };
 
   listenMeasurements = pkgs.writeShellApplication {
@@ -155,12 +154,22 @@ in
         # in ExecPreStart
         villas-node = lib.mkIf config.services.villas.node.enable {
           path = [ pkgs.seguro-gateway ];
-          serviceConfig = {
-            Restart = "on-failure";
-            RestartSec = 3;
-            RestartSteps = 16;
-            RestartMaxDelaySec = 3600;
 
+          requires = [
+            "network-online.target"
+            "cert-renewal.service"
+            "seguro-signature-sender.socket"
+            "boot-firmware.mount"
+          ];
+          after = [
+            "network-online.target"
+            "cert-renewal.service"
+            "seguro-signature-sender.socket"
+            "boot-firmware.mount"
+          ];
+          wantedBy = [ "multi-user.target" ];
+
+          unitConfig = {
             ConditionPathExists = with cfg; [
               gatewayConfigPath
 
@@ -168,6 +177,14 @@ in
               tls.key
               tls.cert
             ];
+          };
+
+          serviceConfig = {
+            Restart = "on-failure";
+            RestartSec = 3;
+            RestartSteps = 16;
+            RestartMaxDelaySec = 3600;
+            TimeoutStopSec = 5;
 
             ExecStartPre = "${generateVillasConfigScript}/bin/villas-generate-config";
             ExecStart = lib.mkForce "${config.services.villas.node.package}/bin/villas-node ${config.services.villas.node.configPath}";
@@ -176,16 +193,56 @@ in
 
         seguro-heartbeat-sender = {
           description = "Publish the device status periodically via MQTT";
-          startAt = "*-*-* *:*:00/10"; # Run every 10-minutes
+
+          requires = [
+            "network-online.target"
+            "cert-renewal.service"
+          ];
+          after = [
+            "network-online.target"
+            "cert-renewal.service"
+          ];
+          wantedBy = [ "multi-user.target" ];
+
+          startAt = "*:*:0/10"; # Run every 10-seconds
+
+          unitConfig = {
+            ConditionPathExists = with cfg; [
+              tls.caCert
+              tls.key
+              tls.cert
+            ];
+          };
+
           serviceConfig = {
+            Type = "oneshot";
             ExecStart = "${pkgs.seguro-platform}/bin/heartbeat-sender";
           };
         };
 
         seguro-signature-sender = {
           description = "Sign measurement data via TSA and TPM and publish them via MQTT";
+
+          requires = [
+            "network-online.target"
+            "cert-renewal.service"
+          ];
+          after = [
+            "network-online.target"
+            "cert-renewal.service"
+          ];
+
+          unitConfig = {
+            ConditionPathExists = with cfg; [
+              tls.caCert
+              tls.key
+              tls.cert
+            ];
+          };
+
           serviceConfig = {
             StandardInput = "socket";
+            StandardOutput = "journal";
             ExecStart = "${pkgs.seguro-platform}/bin/signature-sender --fifo /dev/stdin";
           };
         };
@@ -196,12 +253,83 @@ in
             ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup";
           };
         };
+
+        cert-renewal = {
+          description = "EST renewal of certificats using curl";
+          startAt = "*:0/5";
+
+          requires = [ "network-online.target" ];
+          after = [ "network-online.target" ];
+          wantedBy = [ "multi-user.target" ];
+
+          serviceConfig = {
+            Type = "oneshot";
+
+            ExecStart = lib.getExe (
+              pkgs.writeShellApplication {
+                name = "cert-renewal-service";
+                runtimeInputs = [
+                  pkgs.systemd
+                  pkgs.openssl
+                ];
+                text = ''
+                  CURRENT_TIME=$(date +%s)
+                  if [[ ! -f "${cfg.tls.cert}" || ! -f "${cfg.tls.key}" ]]; then
+                    EXPIRY_TIME=0
+                  else
+                    EXPIRY_TIME=$(openssl x509 -enddate -noout -in "${cfg.tls.cert}" | cut -d = -f 2- | date +%s -f - || echo 0)
+                  fi
+
+                  if (( EXPIRY_TIME - CURRENT_TIME < 3*60*60*24 )); then
+                    echo "Renewing certificate"
+                    ${lib.getExe pkgs.cert-renewal} "${cfg.tls.cert}" "${cfg.tls.key}"
+                    systemctl restart villas-node seguro-signature-sender
+
+                  else
+                    echo "Certificate is still valid"
+                  fi
+                '';
+              }
+            );
+          };
+        };
+
+        set-hostname = {
+          description = "Set the hostname early during boot";
+
+          requires = [ "boot-firmware.mount" ];
+          after = [ "boot-firmware.mount" ];
+
+          wantedBy = [ "network-pre.target" ];
+          before = [ "network-pre.target" ];
+
+          unitConfig = {
+            ConditionPathExists = [
+              cfg.gatewayConfigPath
+            ];
+          };
+
+          serviceConfig = {
+            Type = "oneshot";
+
+            ExecStart = lib.getExe (
+              pkgs.writeShellApplication {
+                name = "set-hostname";
+                runtimeInputs = [ pkgs.jq ];
+                text = ''
+                  HOSTNAME=$(jq -r '.uid' ${cfg.gatewayConfigPath})
+                  echo "$HOSTNAME" > /etc/hostname
+                  hostnamectl set-hostname --transient "$HOSTNAME"
+                '';
+              }
+            );
+          };
+        };
       };
 
       sockets = {
         seguro-signature-sender = {
-          description = "Sign measurement data via TSA and TPM and publish them via MQTT";
-          wantedBy = [ "multi-user.target" ];
+          description = "Sign  measurement data via TSA and TPM and publish them via MQTT";
           socketConfig = {
             ListenFIFO = "/run/villas-digests.fifo";
           };

@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Steffen Vogel, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
-{lib, ...}:{
+{ lib, ... }:
+{
   boot = {
     # loader.systemd-boot.enable = true;
   };
@@ -18,7 +19,10 @@
     "/boot/firmware" = {
       device = "/dev/disk/by-label/FIRMWARE";
       fsType = "vfat";
-      options = lib.mkForce ["auto" "nofail"];
+      options = lib.mkForce [
+        "auto"
+        "nofail"
+      ];
     };
 
     # Mount the rest of the partition as persistent storage
