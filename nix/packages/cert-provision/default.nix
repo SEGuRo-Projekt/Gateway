@@ -5,13 +5,15 @@
   writeShellApplication,
   curl,
   openssl,
+  jq,
   ...
 }:
 writeShellApplication {
-  name = "cert-renewal";
+  name = "cert-provisioning";
   runtimeInputs = [
     curl
     openssl
+    jq
   ];
   text = builtins.readFile ./renewal.sh;
 }
