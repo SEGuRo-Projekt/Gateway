@@ -68,7 +68,7 @@
         packages = {
           default = self.nixosConfigurations.rpi.config.system.build.sdImage;
 
-          inherit (pkgs) cert-renewal;
+          inherit (pkgs) cert-renewal cert-provision;
         };
 
         devShells.default = pkgs.callPackage ./nix/shell.nix { };
