@@ -17,6 +17,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-vscode-server = {
+      url = "github:nix-community/nixos-vscode-server";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     villas-node = {
       url = "github:VILLASframework/node";
       inputs.nixpkgs.follows = "nixpkgs";
