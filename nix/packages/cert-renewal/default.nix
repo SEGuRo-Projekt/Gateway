@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Steffen Vogel, OPAL-RT Germany GmbH
+# SPDX-License-Identifier: Apache-2.0
+
 {
   writeShellApplication,
   curl,
@@ -10,5 +13,5 @@ writeShellApplication {
     curl
     openssl
   ];
-  text = builtins.readFile ./cert-renewal.sh;
+  text = builtins.readFile ./renewal.sh;
 }
