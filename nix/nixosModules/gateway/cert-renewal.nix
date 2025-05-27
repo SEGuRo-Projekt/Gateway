@@ -14,23 +14,22 @@ let
 
   checkRenewScript = pkgs.writeShellApplication {
     name = "check-cert-renewal";
-    runtimeInputs = [
-      pkgs.systemd
-      pkgs.openssl
+    runtimeInputs = with pkgs; [
+      systemd
+      openssl
     ];
     text = ''
       CURRENT_TIME=$(date +%s)
-      if [[ ! -f "${cfg.cert}" || ! -f "${cfg.key}" ]]; then
+      if ! [ -f "$CERT" ] || ! [ -f "$KEY" ]; then
         EXPIRY_TIME=0
       else
-        EXPIRY_TIME=$(openssl x509 -enddate -noout -in "${cfg.cert}" | cut -d = -f 2- | date +%s -f - || echo 0)
+        EXPIRY_TIME=$(openssl x509 -enddate -noout -in "$CERT" | cut -d = -f 2- | date +%s -f - || echo 0)
       fi
 
-      if (( EXPIRY_TIME - CURRENT_TIME < ${toString cfg.renewBefore} )); then
+      if (( EXPIRY_TIME - CURRENT_TIME < RENEW_BEFORE )); then
         echo "Renewing certificate"
-        ${lib.getExe pkgs.cert-renewal} "${cfg.cert}" "${cfg.key}"
+        ${lib.getExe pkgs.cert-renewal}
         systemctl restart ${concatStringsSep " " cfg.restartServices}
-
       else
         echo "Certificate is still valid"
       fi
@@ -80,6 +79,7 @@ in
         CERT = cfg.cert;
         KEY = cfg.key;
         EST_URL = cfg.estEndpoint;
+        RENEW_BEFORE = toString cfg.renewBefore;
         CSR_COMMON_NAME = cfg.commonName;
       };
 
