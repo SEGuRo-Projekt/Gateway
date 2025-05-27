@@ -8,5 +8,14 @@
       "python.linting.flake8Args": [
           "--max-line-length=88"
       ],
+    },
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nil", // or "nixd"
+    "nix.serverSettings": {
+      "nil": {
+        "formatting": {
+          "command": ["nixfmt"],
+        },
+      },
     }
   }
