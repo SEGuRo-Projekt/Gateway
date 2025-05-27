@@ -58,20 +58,23 @@
 
       packagesOverlay =
         final: prev: (forDirEntries ./nix/packages (name: path: prev.callPackage path { inherit inputs; }));
+
+      overlays = [
+        packagesOverlay
+        poetry2nix.overlays.default
+        seguro-platform.overlays.default
+      ];
     in
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs {
-          inherit system;
-          inherit (self) overlays;
-        };
+        pkgs = import nixpkgs { inherit system overlays; };
       in
       {
-        # Define the SD-Card image as our default build derivation
-        # This allows us to simply run "nix build" inside our repo to build an image.
         packages = {
-          default = self.nixosConfigurations.rpi.config.system.build.sdImage;
+          # Define the SD-Card image as our default build derivation
+          # This allows us to simply run "nix build" inside our repo to build an image.
+          default = self.nixosConfigurations.gateway-rpi.config.system.build.sdImage;
 
           inherit (pkgs) cert-renewal;
         };
@@ -93,9 +96,9 @@
             { system, modules }:
             {
               inherit system;
-              modules = modules ++ [ { nixpkgs.overlays = self.overlays; } ];
-              specialArgs = inputs // {
-                inherit hostname;
+              modules = modules ++ [ { nixpkgs.overlays = overlays; } ];
+              specialArgs = {
+                inherit hostname self inputs;
               };
             };
           mkNixosConfiguration = name: path: nixpkgs.lib.nixosSystem (parse name (import path));
@@ -103,11 +106,5 @@
         forDirEntries ./nix/nixosConfigurations mkNixosConfiguration;
 
       secrets = dirEntries ./nix/secrets;
-
-      overlays = [
-        packagesOverlay
-        poetry2nix.overlays.default
-        seguro-platform.overlays.default
-      ];
     };
 }

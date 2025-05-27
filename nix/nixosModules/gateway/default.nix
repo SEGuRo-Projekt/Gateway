@@ -11,6 +11,7 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 let
@@ -20,7 +21,6 @@ in
   imports = with self.nixosModules; [
     inputs.nixos-vscode-server.nixosModules.default
 
-    rpi-base
     users
 
     ./cert-renewal.nix

@@ -3,6 +3,8 @@
 
 { self, ... }:
 {
+  imports = with self.nixosModules; [ rpi-base ];
+
   sdImage.populateFirmwareCommands =
     let
       defaultGatewayConfig = "${self}/config/gateway.json";
