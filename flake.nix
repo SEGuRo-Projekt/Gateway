@@ -106,5 +106,8 @@
         forDirEntries ./nix/nixosConfigurations mkNixosConfiguration;
 
       secrets = dirEntries ./nix/secrets;
+      overlays = {
+        default = packagesOverlay;
+      };
     };
 }

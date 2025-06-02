@@ -125,5 +125,10 @@ in
       };
       gc.automatic = true;
     };
+
+    nixpkgs.overlays = [
+      seguro-platform.overlays.default
+      self.overlays.default
+    ];
   };
 }
