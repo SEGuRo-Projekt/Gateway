@@ -85,7 +85,7 @@
     // {
       nixosModules =
         let
-          mkNixosModule = name: path: import path;
+          mkNixosModule = name: path: (import path) inputs;
         in
         forDirEntries ./nix/nixosModules mkNixosModule;
 

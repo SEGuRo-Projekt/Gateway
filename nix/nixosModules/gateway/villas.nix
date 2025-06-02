@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2025 Steffen Vogel, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
 
+{ villas-node, ... }:
 {
   pkgs,
   config,
   lib,
-  inputs,
   ...
 }:
 let
@@ -20,7 +20,7 @@ let
   };
 in
 {
-  imports = [ inputs.villas-node.nixosModules.default ];
+  imports = [ villas-node.nixosModules.default ];
 
   environment.systemPackages = with pkgs; [
     villas-node
@@ -28,7 +28,8 @@ in
   ];
 
   nixpkgs.overlays = [
-    inputs.villas-node.overlays.default
+    villas-node.overlays.default
+
     # TODO: Cross-build of hiredis is broken
     (final: prev: { villas-node = prev.villas-node.override { withNodeRedis = false; }; })
 
