@@ -29,7 +29,11 @@
 
     seguro-platform = {
       url = "github:SEGuRo-Projekt/Platform";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+        poetry2nix.follows = "poetry2nix";
+      };
     };
   };
 
