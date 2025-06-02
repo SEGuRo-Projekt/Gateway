@@ -3,7 +3,10 @@
 
 { self, ... }:
 {
-  imports = with self.nixosModules; [ rpi-base ];
+  imports = with self.nixosModules; [
+    rpi-base
+    gateway
+  ];
 
   sdImage.populateFirmwareCommands =
     let
