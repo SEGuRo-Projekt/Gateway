@@ -1,11 +1,8 @@
 # SPDX-FileCopyrightText: 2024 Philipp Jungkamp, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
-{
-  agenix,
-  pkgs,
-  lib,
-  ...
-}:
+
+{ agenix, ... }:
+{ pkgs, lib, ... }:
 let
   inherit (lib) getExe;
 in

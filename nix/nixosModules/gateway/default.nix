@@ -6,12 +6,17 @@
 #  - Copies default Gateway JSON configuration to /boot
 #  - Generates VILLASnode config via villas-generate-gateway-config during start of VILLASnode
 #  - Makes sure opcua-readout and villas-generate-gateway-config are in the system PATH
+
 {
   self,
+  nixos-vscode-server,
+  seguro-platform,
+  ...
+}@inputs:
+{
   pkgs,
   lib,
   config,
-  inputs,
   ...
 }:
 let
@@ -19,7 +24,7 @@ let
 in
 {
   imports = with self.nixosModules; [
-    inputs.nixos-vscode-server.nixosModules.default
+    nixos-vscode-server.nixosModules.default
 
     users
 
@@ -27,12 +32,11 @@ in
     ./provision.nix
     ./heartbeat-sender.nix
     ./tools.nix
-    ./villas.nix
+    (import ./villas.nix inputs)
   ];
 
   options = with lib; {
     seguro.gateway = {
-
       tls = {
         key = mkOption {
           type = types.path;
