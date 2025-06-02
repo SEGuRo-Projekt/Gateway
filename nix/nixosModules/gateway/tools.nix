@@ -39,12 +39,10 @@ in
   ];
 
   systemd.services = {
-    services = {
-      opcua-mockup = {
-        description = "A mockup of an OPC-UA measurement device";
-        serviceConfig = {
-          ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup";
-        };
+    opcua-mockup = {
+      description = "A mockup of an OPC-UA measurement device";
+      serviceConfig = {
+        ExecStart = "${pkgs.seguro-gateway}/bin/opcua-mockup";
       };
     };
   };
