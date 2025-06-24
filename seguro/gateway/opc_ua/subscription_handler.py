@@ -212,42 +212,62 @@ async def read_measurements(device, opcua_objs, mode: Mode):
 
     pub_handler = PublishingHandler(values)
 
-    async with Client(url=url) as client:
-        nodes = {}
-        node_ids = {}
+    while True:
+        try:
+            async with Client(url=url) as client:
+                nodes = {}
+                node_ids = {}
 
-        for measurement, browse_path in browse_paths.items():
-            nodes[measurement] = await client.nodes.root.get_child(browse_path)
-            node_ids[nodeid_to_string(nodes[measurement].nodeid)] = measurement
+                for measurement, browse_path in browse_paths.items():
+                    nodes[measurement] = await client.nodes.root.get_child(
+                        browse_path
+                    )
+                    node_ids[
+                        nodeid_to_string(nodes[measurement].nodeid)
+                    ] = measurement
 
-        if mode == Mode.SUBSCRIBE:
-            log_msg("Reading in subscription mode ...")
+                if mode == Mode.SUBSCRIBE:
+                    log_msg("Reading in subscription mode ...")
 
-            handler = SubscriptionHandler(node_ids, pub_handler)
-            sub = await client.create_subscription(0, handler)
+                    handler = SubscriptionHandler(node_ids, pub_handler)
+                    sub = await client.create_subscription(0, handler)
 
-            await asyncio.gather(
-                *[sub.subscribe_data_change(node) for _, node in nodes.items()]
-            )
+                    await asyncio.gather(
+                        *[
+                            sub.subscribe_data_change(node)
+                            for _, node in nodes.items()
+                        ]
+                    )
 
-            while True:
-                time_delta = pub_handler.send_values(
-                    time.time(), device["sending_rate"]
-                )
-                # Wait until the next sending time to avoid busy waiting
-                await asyncio.sleep(1 / device["sending_rate"] - time_delta)
+                    while True:
+                        await client.check_connection()
 
-        elif mode == Mode.GATHER:
-            log_msg("Reading in gather mode ...")
+                        time_delta = pub_handler.send_values(
+                            time.time(), device["sending_rate"]
+                        )
+                        # Wait until the next sending time to avoid busy waiting
+                        await asyncio.sleep(
+                            1 / device["sending_rate"] - time_delta
+                        )
 
-            while True:
-                await asyncio.gather(
-                    *[
-                        read_and_store(name, node, pub_handler)
-                        for name, node in nodes.items()
-                    ]
-                )
-                pub_handler.send_values(time.time(), device["sending_rate"])
+                elif mode == Mode.GATHER:
+                    log_msg("Reading in gather mode ...")
+
+                    while True:
+                        await asyncio.gather(
+                            *[
+                                read_and_store(name, node, pub_handler)
+                                for name, node in nodes.items()
+                            ]
+                        )
+                        pub_handler.send_values(
+                            time.time(), device["sending_rate"]
+                        )
+
+        except Exception as e:
+            log_msg(f"Exception in read_measurements: {e}")
+            log_msg("Trying to re-establish connection in 1 second...")
+            await asyncio.sleep(1)
 
 
 class SubscriptionHandler:
