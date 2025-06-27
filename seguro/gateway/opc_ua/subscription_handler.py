@@ -212,6 +212,7 @@ async def read_measurements(device, opcua_objs, mode: Mode):
 
     pub_handler = PublishingHandler(values)
 
+    backoff_duration = 1
     while True:
         try:
             async with Client(url=url) as client:
@@ -266,8 +267,14 @@ async def read_measurements(device, opcua_objs, mode: Mode):
 
         except Exception as e:
             log_msg(f"Exception in read_measurements: {e}")
-            log_msg("Trying to re-establish connection in 1 second...")
-            await asyncio.sleep(1)
+            log_msg(
+                f"Trying to re-establish connection in {backoff_duration} second..."
+            )
+
+            await asyncio.sleep(backoff_duration)
+            backoff_duration = min(
+                backoff_duration * 2, 600
+            )  # Exponential backoff, max 10 minutes
 
 
 class SubscriptionHandler:
