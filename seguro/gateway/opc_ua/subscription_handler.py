@@ -191,8 +191,54 @@ async def read_and_store(name, node, publishing_handler):
     publishing_handler.values[name] = value
 
 
+async def connect_and_publish(
+    url: str, device: dict, browse_paths: dict, mode: Mode
+):
+    values = dict.fromkeys(browse_paths.keys())
+    pub_handler = PublishingHandler(values)
+
+    async with Client(url=url) as client:
+        nodes = {}
+        node_ids = {}
+
+        for measurement, browse_path in browse_paths.items():
+            nodes[measurement] = await client.nodes.root.get_child(browse_path)
+            node_ids[nodeid_to_string(nodes[measurement].nodeid)] = measurement
+
+        if mode == Mode.SUBSCRIBE:
+            log_msg("Reading in subscription mode ...")
+
+            handler = SubscriptionHandler(node_ids, pub_handler)
+            sub = await client.create_subscription(0, handler)
+
+            await asyncio.gather(
+                *[sub.subscribe_data_change(node) for _, node in nodes.items()]
+            )
+
+            while True:
+                await client.check_connection()
+
+                time_delta = pub_handler.send_values(
+                    time.time(), device["sending_rate"]
+                )
+                # Wait until the next sending time to avoid busy waiting
+                await asyncio.sleep(1 / device["sending_rate"] - time_delta)
+
+        elif mode == Mode.GATHER:
+            log_msg("Reading in gather mode ...")
+
+            while True:
+                await asyncio.gather(
+                    *[
+                        read_and_store(name, node, pub_handler)
+                        for name, node in nodes.items()
+                    ]
+                )
+                pub_handler.send_values(time.time(), device["sending_rate"])
+
+
 async def read_measurements(device, opcua_objs, mode: Mode):
-    """Create browse paths, connect to the device and read the measurements at
+    """Create browse paths, connect to the device and read/publish the measurements at
     given sample rate.
 
     Arguments:
@@ -206,64 +252,12 @@ async def read_measurements(device, opcua_objs, mode: Mode):
     log_msg(f"Connecting to {url} ...")
 
     browse_paths = construct_browse_paths(uid, opcua_objs)
-    values = dict.fromkeys(browse_paths.keys())
-
     log_msg(f"Browse paths: {browse_paths}")
-
-    pub_handler = PublishingHandler(values)
 
     backoff_duration = 1
     while True:
         try:
-            async with Client(url=url) as client:
-                nodes = {}
-                node_ids = {}
-
-                for measurement, browse_path in browse_paths.items():
-                    nodes[measurement] = await client.nodes.root.get_child(
-                        browse_path
-                    )
-                    node_ids[
-                        nodeid_to_string(nodes[measurement].nodeid)
-                    ] = measurement
-
-                if mode == Mode.SUBSCRIBE:
-                    log_msg("Reading in subscription mode ...")
-
-                    handler = SubscriptionHandler(node_ids, pub_handler)
-                    sub = await client.create_subscription(0, handler)
-
-                    await asyncio.gather(
-                        *[
-                            sub.subscribe_data_change(node)
-                            for _, node in nodes.items()
-                        ]
-                    )
-
-                    while True:
-                        await client.check_connection()
-
-                        time_delta = pub_handler.send_values(
-                            time.time(), device["sending_rate"]
-                        )
-                        # Wait until the next sending time to avoid busy waiting
-                        await asyncio.sleep(
-                            1 / device["sending_rate"] - time_delta
-                        )
-
-                elif mode == Mode.GATHER:
-                    log_msg("Reading in gather mode ...")
-
-                    while True:
-                        await asyncio.gather(
-                            *[
-                                read_and_store(name, node, pub_handler)
-                                for name, node in nodes.items()
-                            ]
-                        )
-                        pub_handler.send_values(
-                            time.time(), device["sending_rate"]
-                        )
+            await connect_and_publish(url, device, browse_paths, mode)
 
         except Exception as e:
             log_msg(f"Exception in read_measurements: {e}")
