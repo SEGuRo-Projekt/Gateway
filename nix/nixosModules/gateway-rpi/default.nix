@@ -1,7 +1,11 @@
 # SPDX-FileCopyrightText: 2025 Steffen Vogel, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
 
-{ self, config, ... }:
+{
+  self,
+  ...
+}@inputs:
+{ config, ... }:
 {
   imports = with self.nixosModules; [
     rpi-base
