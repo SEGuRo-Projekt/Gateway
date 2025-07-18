@@ -63,6 +63,20 @@ in
         ];
         description = "List of services to restart after certificate renewal";
       };
+      key = lib.mkOption {
+        type = lib.types.path;
+        default = "/boot/firmware/keys/mp.key";
+      };
+
+      cert = lib.mkOption {
+        type = lib.types.path;
+        default = "/boot/firmware/keys/mp.crt";
+      };
+
+      caCert = lib.mkOption {
+        type = lib.types.path;
+        default = "/boot/firmware/keys/ca.crt";
+      };
     };
   };
 
@@ -78,7 +92,7 @@ in
       environment = {
         CERT = cfg.cert;
         KEY = cfg.key;
-        EST_URL = cfg.estEndpoint;
+        EST_URL = cfg.estUrl;
         RENEW_BEFORE = toString cfg.renewBefore;
         CSR_COMMON_NAME = cfg.commonName;
       };
