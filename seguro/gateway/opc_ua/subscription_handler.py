@@ -122,8 +122,32 @@ def construct_browse_paths(uid: str, measurements: dict):
         elif opcua_objects.get(measurement) == Type.POWER:
             valtypes = [("PowerComplexRe", "P"), ("PowerComplexIm", "Q")]
             for attribute in attributes:
-                # for attribute in attributes:
-                group, channel, _ = measurement.split("_")
+                module = None
+                # group, channel, _ = measurement.split("_")
+
+                keywords = measurement.split("_")
+                module = None
+                if len(keywords) == 4:
+                    module, group, channel, _ = keywords
+                    base = [
+                        "0:Objects",
+                        "2:Device",
+                        "2:Modules",
+                        f"2:{module}",
+                        "2:Measurements",
+                    ]
+                elif len(keywords) == 3:
+                    group, channel, _ = keywords
+                    base = ["0:Objects", "2:Device", "2:Measurements"]
+
+                else:
+                    raise ValueError(
+                        (
+                            "Allowed power measurement forms: IGx_Iy_Power or "
+                            "Modulez_IGx_Iy_Power"
+                        )
+                    )
+
                 for valtype in valtypes:
                     if attribute == "Momentary":
                         paths[
