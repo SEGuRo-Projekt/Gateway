@@ -157,7 +157,7 @@ def construct_browse_paths(uid: str, measurements: dict):
                     )
 
         else:
-            paths[measurement] = base + measurement.split(",")
+            paths[measurement] = measurement.split(",")
             log_msg(
                 "Measurement object not recognized, "
                 + f"interpreting as browse path {paths[measurement]}..."
