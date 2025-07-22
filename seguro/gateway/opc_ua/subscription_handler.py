@@ -53,10 +53,11 @@ def construct_browse_paths(uid: str, measurements: dict):
         uid {str} -- Unique identifier of the device
         measurements {dict} -- Measurements of the device
     """
-    base = ["0:Objects", "2:Device", "2:Measurements"]
     paths = {}
 
     for measurement, attributes in measurements.items():
+        base = ["0:Objects", "2:Device", "2:Measurements"]
+
         if opcua_objects.get(measurement) == Type.VOLTAGE:
 
             valtypes = ["ULNComplexRe", "ULNComplexIm"]
@@ -95,7 +96,6 @@ def construct_browse_paths(uid: str, measurements: dict):
                     ]
                 elif len(keywords) == 2:
                     group, channel = keywords
-                    base = ["0:Objects", "2:Device", "2:Measurements"]
 
                 else:
                     raise ValueError(
@@ -138,7 +138,6 @@ def construct_browse_paths(uid: str, measurements: dict):
                     ]
                 elif len(keywords) == 3:
                     group, channel, _ = keywords
-                    base = ["0:Objects", "2:Device", "2:Measurements"]
 
                 else:
                     raise ValueError(
