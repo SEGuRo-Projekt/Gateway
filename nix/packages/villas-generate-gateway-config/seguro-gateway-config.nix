@@ -111,8 +111,8 @@ in
         {
           type = "frame";
           trigger = "timestamp";
-          interval = 10;
-          unit = "seconds";
+          interval = mp.frameInterval or 10;
+          unit = mp.frameUnit or "seconds";
         }
         {
           type = "digest";
