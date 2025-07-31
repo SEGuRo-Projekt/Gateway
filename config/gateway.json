@@ -14,6 +14,8 @@
             "IG1_I3",
             "IG1_I1_Power"
           ],
+          "frameInterval": 30,
+          "frameUnit": "seconds",
           "uid": "mp1"
         }
       ],
