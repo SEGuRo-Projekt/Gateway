@@ -241,11 +241,9 @@ async def connect_and_publish(
             while True:
                 await client.check_connection()
 
-                time_delta = pub_handler.send_values(
-                    time.time(), device["sending_rate"]
-                )
+                time_delta = pub_handler.send_values(device["sending_rate"])
                 # Wait until the next sending time to avoid busy waiting
-                await asyncio.sleep(1 / device["sending_rate"] - time_delta)
+                await asyncio.sleep(time_delta)
 
         elif mode == Mode.GATHER:
             log_msg("Reading in gather mode ...")
