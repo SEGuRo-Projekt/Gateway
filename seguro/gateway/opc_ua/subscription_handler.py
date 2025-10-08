@@ -255,7 +255,7 @@ async def connect_and_publish(
                         for name, node in nodes.items()
                     ]
                 )
-                pub_handler.send_values(time.time(), device["sending_rate"])
+                pub_handler.send_values(device["sending_rate"])
 
 
 async def read_measurements(device, opcua_objs, mode: Mode):
