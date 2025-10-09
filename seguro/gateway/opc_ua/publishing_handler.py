@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
 # SPDX-License-Identifier: Apache-2.0
-
 import time
 
 
@@ -11,7 +10,8 @@ class PublishingHandler:
 
     def __init__(self, values):
         self.values = values
-        self.last_time = 0
+        self.next_time = -1
+        self.synchronized = False
 
     def __reduce_complex(self, values):
         """
@@ -41,7 +41,7 @@ class PublishingHandler:
                 reduced_complex[key] = value
         return reduced_complex
 
-    def send_values(self, _time, rate):
+    def send_values(self, rate):
         """
         Send values to broker if the time delta is greater than the sending
         rate.
@@ -50,18 +50,27 @@ class PublishingHandler:
         it to STDOUT to be captured by an exec-type VILLASnode.
 
         Arguments:
-            _time {float} -- Current time
             rate {float} -- Sending rate in Hz
 
         Returns:
-            float -- Time delta to the last sending
+            float -- Time to sleep until next interval
         """
-        time_delta = _time - self.last_time
+        interval = 1 / rate
+
         if None in self.values.values():
             # If there are still None values, do not send anything
-            return time_delta
+            return -1
 
-        if time_delta > 1 / rate:
+        if not self.synchronized:
+            # Busy wait until the next aligned interval, with 1‰ acurracy
+            _time = time.time()
+            while _time % interval > (interval * 0.001):
+                _time = time.time()
+
+            self.synchronized = True
+            self.next_time = _time - _time % interval
+
+        if time.time() >= self.next_time:
             # Print the values to STDOUT in the villas.human format:
             # {timestamp_s}.{timestamp_ns} {value1} {value2} ...
             reduced_values = self.__reduce_complex(self.values)
@@ -74,6 +83,8 @@ class PublishingHandler:
                 " ".join(str(x) for x in list(reduced_values.values())),
                 flush=True,
             )
+            self.next_time += 1 / rate
 
-            self.last_time = _time
-        return time_delta
+        # Compensate for drift introduced by the function itself
+        drift = time.time() % interval
+        return interval - drift

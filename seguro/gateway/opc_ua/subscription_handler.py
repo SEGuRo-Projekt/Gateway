@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
 # SPDX-License-Identifier: Apache-2.0
 import asyncio
-import time
 
 from enum import Enum
 from asyncua import Client
@@ -241,11 +240,9 @@ async def connect_and_publish(
             while True:
                 await client.check_connection()
 
-                time_delta = pub_handler.send_values(
-                    time.time(), device["sending_rate"]
-                )
+                time_delta = pub_handler.send_values(device["sending_rate"])
                 # Wait until the next sending time to avoid busy waiting
-                await asyncio.sleep(1 / device["sending_rate"] - time_delta)
+                await asyncio.sleep(time_delta)
 
         elif mode == Mode.GATHER:
             log_msg("Reading in gather mode ...")
@@ -257,7 +254,7 @@ async def connect_and_publish(
                         for name, node in nodes.items()
                     ]
                 )
-                pub_handler.send_values(time.time(), device["sending_rate"])
+                pub_handler.send_values(device["sending_rate"])
 
 
 async def read_measurements(device, opcua_objs, mode: Mode):
