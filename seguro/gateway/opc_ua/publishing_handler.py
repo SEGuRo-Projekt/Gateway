@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2023 Felix Wege, EONERC-ACS, RWTH Aachen University
 # SPDX-License-Identifier: Apache-2.0
-
 import time
 
 
@@ -63,13 +62,13 @@ class PublishingHandler:
             return -1
 
         if not self.synchronized:
-            # Busy wait until the next aligned interval
+            # Busy wait until the next aligned interval, with 1‰ acurracy
             _time = time.time()
-            while _time % interval > interval * 0.01:
+            while _time % interval > (interval * 0.001):
                 _time = time.time()
 
             self.synchronized = True
-            self.next_time = _time - _time % interval  # Inverse modulo
+            self.next_time = _time - _time % interval
 
         if time.time() >= self.next_time:
             # Print the values to STDOUT in the villas.human format:
