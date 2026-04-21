@@ -30,6 +30,15 @@ in
   nixpkgs.overlays = [
     villas-node.overlays.default
 
+    (final: prev: {
+      libiec61850 =
+        (builtins.getFlake "github:VILLASframework/node/${villas-node.rev}")
+          .inputs
+          .nixpkgs
+          .legacyPackages.${prev.system}
+          .libiec61850;
+    })
+
     # TODO: Cross-build of hiredis is broken
     (final: prev: { villas-node = prev.villas-node.override { withNodeRedis = false; }; })
 

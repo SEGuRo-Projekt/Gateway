@@ -280,11 +280,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1713160323,
-        "narHash": "sha256-YRMAoWEQi3UvuAxeDloj7fKtls4F7LzGDnGuAdDsKeI=",
+        "lastModified": 1776089602,
+        "narHash": "sha256-8yOdDrB5k7L0+uD6skoPNEvbeYUQfRujAKdCVuEPDmw=",
         "owner": "VILLASframework",
         "repo": "node",
-        "rev": "9d1c45440caca68ead24e5afeaab10e2ae98655c",
+        "rev": "fd49122d5d8a7291ca25d876ff9491c5495cb83d",
         "type": "github"
       },
       "original": {
