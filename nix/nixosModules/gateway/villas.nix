@@ -30,18 +30,12 @@ in
   nixpkgs.overlays = [
     villas-node.overlays.default
 
-    # TODO: Cross-build of hiredis is broken
-    (final: prev: { villas-node = prev.villas-node.override { withNodeRedis = false; }; })
-
-    # TODO: Enable EtherCAT on aarch64
+    # Disable some VILLASnode features we don't need to reduce the attack surface and build time.
     (final: prev: {
-      ethercat = prev.ethercat.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          meta = previousAttrs.meta or { } // {
-            platforms = prev.lib.platforms.linux;
-          };
-        }
-      );
+      villas-node = prev.villas-node.override {
+        withAllNodes = false;
+        withNodeMqtt = true;
+      };
     })
   ];
 
