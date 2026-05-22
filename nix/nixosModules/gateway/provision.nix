@@ -34,7 +34,6 @@ in
             runtimeInputs = [ pkgs.jq ];
             text = ''
               HOSTNAME=$(jq -r '.uid' ${cfg.gatewayConfigPath})
-              echo "$HOSTNAME" > /etc/hostname
               hostnamectl set-hostname --transient "$HOSTNAME"
             '';
           }
