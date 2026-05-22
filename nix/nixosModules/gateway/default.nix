@@ -94,6 +94,13 @@ in
       openssh.enable = true;
       vscode-server.enable = true;
 
+      # Use RWTH NTP servers for mp-acs which cant reach external NTP servers due to firewall rules
+      timesyncd.fallbackServers = [
+        "ntp1.rwth-aachen.de"
+        "ntp2.rwth-aachen.de"
+        "ntp3.rwth-aachen.de"
+      ];
+
       getty = {
         greetingLine = lib.mkForce ''<<< Welcome to the SEGuRo Gateway OS ${config.system.nixos.label} (\m) - \l >>>'';
         helpLine = lib.mkForce "\nPlease visit the SEGuRo online documentation for support: https://seguro.eonerc.rwth-aachen.de/";
