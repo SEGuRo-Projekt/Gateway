@@ -32,17 +32,5 @@
     (final: super: {
       makeModulesClosure = x: super.makeModulesClosure (x // { allowMissing = true; });
     })
-
-    # Hotfix for https://github.com/NixOS/nixpkgs/pull/298001
-    # TODO: Remove once in unstable
-    (final: prev: {
-      gnupg24 = prev.gnupg24.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          configureFlags = builtins.filter (prev.lib.hasInfix "npth") previousAttrs.configureFlags ++ [
-            "GPGRT_CONFIG=${prev.lib.getDev prev.libgpg-error}/bin/gpgrt-config"
-          ];
-        }
-      );
-    })
   ];
 }
