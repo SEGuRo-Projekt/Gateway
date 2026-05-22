@@ -12,14 +12,30 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    poetry2nix = {
-      url = "github:nix-community/poetry2nix";
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixos-vscode-server = {
       url = "github:nix-community/nixos-vscode-server";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
     };
 
     villas-node = {
@@ -32,7 +48,9 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-utils.follows = "flake-utils";
-        poetry2nix.follows = "poetry2nix";
+        uv2nix.follows = "uv2nix";
+        pyproject-build-systems.follows = "pyproject-build-systems";
+        pyproject-nix.follows = "pyproject-nix";
       };
     };
   };
@@ -42,7 +60,6 @@
       self,
       nixpkgs,
       flake-utils,
-      poetry2nix,
       villas-node,
       seguro-platform,
       ...
@@ -65,7 +82,6 @@
 
       overlays = [
         packagesOverlay
-        poetry2nix.overlays.default
         seguro-platform.overlays.default
       ];
     in
@@ -80,10 +96,13 @@
           # This allows us to simply run "nix build" inside our repo to build an image.
           default = self.nixosConfigurations.gateway-rpi.config.system.build.sdImage;
 
-          inherit (pkgs) cert-renewal;
+          inherit (pkgs)
+            cert-renewal
+            seguro-gateway
+            ;
         };
 
-        devShells.default = pkgs.callPackage ./nix/shell.nix { };
+        devShells.default = pkgs.callPackage ./nix/shell.nix { inherit inputs; };
       }
     )
     // {

@@ -1,14 +1,34 @@
 # SPDX-FileCopyrightText: 2024 Steffen Vogel, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
 #
-# A Python / Poetry application used for getting data from
+# A Python / uv application used for getting data from
 # Janitza UMG measurement devices via OPC-UA.
 # This application is used by VILLASnode exec-node type.
-{ poetry2nix, python311Packages, ... }:
-poetry2nix.mkPoetryApplication {
-  projectDir = ../../../.;
+{
+  python313,
+  callPackage,
+  lib,
+  inputs,
+  ...
+}:
+let
+  workspace = inputs.uv2nix.lib.workspace.loadWorkspace {
+    workspaceRoot = ../../../.;
+  };
 
-  overrides = poetry2nix.defaultPoetryOverrides.extend (
-    final: prev: { cryptography = python311Packages.cryptography; }
-  );
-}
+  overlay = workspace.mkPyprojectOverlay {
+    sourcePreference = "wheel";
+  };
+
+  pythonSet =
+    (callPackage inputs.pyproject-nix.build.packages {
+      python = python313;
+    }).overrideScope
+      (
+        lib.composeManyExtensions [
+          inputs.pyproject-build-systems.overlays.wheel
+          overlay
+        ]
+      );
+in
+pythonSet.mkVirtualEnv "seguro-gateway-env" workspace.deps.default
