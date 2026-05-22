@@ -1,8 +1,13 @@
 # SPDX-FileCopyrightText: 2024 Philipp Jungkamp, OPAL-RT Germany GmbH
 # SPDX-License-Identifier: Apache-2.0
 
-inputs: {
-  users.users = rec {
+inputs:
+{
+  config,
+  ...
+}:
+{
+  users.users = {
     seguro = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];
@@ -11,7 +16,7 @@ inputs: {
       initialPassword = "seguro";
     };
 
-    root.openssh.authorizedKeys.keys = seguro.openssh.authorizedKeys.keys;
+    root.openssh.authorizedKeys.keys = config.users.users.seguro.openssh.authorizedKeys.keys;
   };
 
   nix.settings.trusted-users = [
