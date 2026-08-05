@@ -91,11 +91,14 @@ in
 
       environment = {
         CERT = cfg.cert;
+        CACERT = cfg.caCert;
         KEY = cfg.key;
         EST_URL = cfg.estUrl;
         RENEW_BEFORE = toString cfg.renewBefore;
         CSR_COMMON_NAME = cfg.commonName;
       };
+
+      path = [ pkgs.curl pkgs.openssl ];
 
       serviceConfig = {
         Type = "oneshot";

@@ -45,7 +45,7 @@ if [ -z "${CSR_COMMON_NAME}" ]; then
 fi
 
 for i in curl openssl ; do
-	if ! which "$i" >/dev/null 2>/dev/null; then
+	if ! command -v "$i" >/dev/null 2>/dev/null; then
 		echo "ERROR: Cannot find \"$i\", which is required by this script"
 		exit 1
 	fi
