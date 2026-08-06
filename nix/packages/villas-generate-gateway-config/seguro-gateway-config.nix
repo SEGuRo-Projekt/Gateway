@@ -119,7 +119,8 @@ in
           uri = getEnvWithDefault "DIGESTS_URI" "/run/villas-digests.fifo";
           algorithm = "sha256";
         }
-      ] ++ lib.optionals debug [ { type = "print"; } ];
+      ]
+      ++ lib.optionals debug [ { type = "print"; } ];
     }) md.points)
   ) config.devices;
 }

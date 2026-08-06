@@ -1,74 +1,34 @@
-# SPDX-FileCopyrightText: 2024 Philipp Jungkamp, OPAL-RT Germany GmbH
+# SPDX-FileCopyrightText: 2026 Felix Wege, EONERC-ACS, RWTH Aachen University
 # SPDX-License-Identifier: Apache-2.0
 
 inputs:
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ lib, config, pkgs, ... }:
 let
-  inherit (lib) escapeShellArg getExe;
-  nix = getExe config.nix.package;
-  nixos-rebuild = getExe pkgs.nixos-rebuild;
-  cfg = config.seguro.auto-update;
-  host = config.networking.hostName;
+  cfg = config.services.gateway.autoUpgrade;
 in
 {
-  options.seguro.auto-update = with lib; {
-    enable = mkEnableOption "SEGuRo auto-update";
-
-    dates = mkOption {
-      type = types.str;
-      default = "daily";
-      description = mdDoc ''
-        How often or when the automatic update is performed.
-
-        The format is described in {manpage}`systemd.time(7)`.
-      '';
+  options.services.gateway.autoUpgrade = {
+    enable = lib.mkEnableOption "automatic gateway updates via system.autoUpgrade";
+    flake = lib.mkOption {
+      type = lib.types.str;
+      default = "git+ssh://git@github.com/SEGuRo-Projekt/Gateway.git?ref=main#gateway-rpi";
+      description = "Flake reference to track for updates.";
     };
-
-    flake = mkOption {
-      type = types.str;
-      default = "github:SEGuRo-Projekt/Nixfiles/master";
-      description = mkdDoc ''
-        The remote flake from which the system should try to
-        rebuild itself.
-      '';
+    dates = lib.mkOption {
+      type = lib.types.str;
+      default = "02:00";
+    };
+    randomizedDelaySec = lib.mkOption {
+      type = lib.types.str;
+      default = "5min";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    systemd = {
-      timers.seguro-auto-update = {
-        wantedBy = [ "timers.target" ];
-        timerConfig = {
-          OnCalendar = cfg.dates;
-          Unit = "seguro-auto-update.service";
-        };
-      };
-
-      services.seguro-auto-update = {
-        script = ''
-          current="$(readlink /run/current-system)"
-          remote="$(${nix} eval --raw --refresh ${escapeShellArg ''${cfg.flake}#nixosConfigurations."${host}".config.system.build.toplevel''})"
-
-          if [ "$current" != "$remote" ]; then
-            echo "The remote nixos configuration for this machine has changed"
-            echo "current: $current"
-            echo "remote:  $remote"
-
-            ${nixos-rebuild} boot --flake ${escapeShellArg "${cfg.flake}#${host}"}
-
-            systemctl reboot
-          fi
-        '';
-        serviceConfig = {
-          Type = "oneshot";
-          User = "root";
-        };
-      };
+    system.autoUpgrade = {
+      enable = true;
+      inherit (cfg) flake dates randomizedDelaySec;
+      flags = [ "--no-update-lock-file" ];
     };
   };
 }

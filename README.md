@@ -50,7 +50,7 @@ You can exit the VM console by `Ctrl+A + X`.
 Build a SD-card image by running:
 
 ```shell
-nix build .#nixosConfigurations.rpi-1.config.system.build.sdImage
+nix build .#nixosConfigurations.gateway-rpi.config.system.build.sdImage
 ```
 
 or short

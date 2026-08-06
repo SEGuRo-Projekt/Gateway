@@ -4,7 +4,7 @@
 {
   self,
   ...
-}@inputs:
+}:
 { config, ... }:
 {
   imports = with self.nixosModules; [

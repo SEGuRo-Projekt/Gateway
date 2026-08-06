@@ -17,7 +17,6 @@ set -e
 # Prepare
 #
 
-
 # Check if required environment variables are set
 if [ -z "${EST_URL}" ]; then
     echo "Please set the EST_URL environment variable."
@@ -39,13 +38,14 @@ if [ -z "${KEY}" ]; then
     exit 1
 fi
 
+CSR_COMMON_NAME="${CSR_COMMON_NAME:-$(cat /etc/hostname 2>/dev/null)}"
 if [ -z "${CSR_COMMON_NAME}" ]; then
     echo "Please set the CSR_COMMON_NAME environment variable."
     exit 1
 fi
 
 for i in curl openssl ; do
-	if ! which "$i" >/dev/null 2>/dev/null; then
+	if ! command -v "$i" >/dev/null 2>/dev/null; then
 		echo "ERROR: Cannot find \"$i\", which is required by this script"
 		exit 1
 	fi
