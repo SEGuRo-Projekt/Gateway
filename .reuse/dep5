@@ -1,8 +1,8 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: SEGuRo Gateway
 Upstream-Contact: Felix Wege <felix.wege@eonerc.rwth-aachen.de>
-Source: https://github.com/SEGuRo-Projekt/Plattform
+Source: https://github.com/SEGuRo-Projekt/Gateway
 
-Files: flake.lock poetry.lock config/*.json *.age
+Files: flake.lock uv.lock config/*.json *.age
 Copyright: 2024 Steffen Vogel, OPAL-RT Germany GmbH
 License: Apache-2.0
